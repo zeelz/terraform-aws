@@ -5,7 +5,8 @@ stages:
 build:
   stage: build
   script:
-    - echo gitlab ci > dummy
+    - mkdir build
+    - echo gitlab ci > build/dummy
 
   artifacts:
     paths:
