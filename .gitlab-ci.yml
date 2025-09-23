@@ -14,5 +14,7 @@ build:
 
 test:
   stage: test
+  image: docker:latest
   script:
-    - cat build/dummy
+    # - cat build/dummy
+    - docker --version
