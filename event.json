@@ -1,0 +1,22 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/",
+  "httpMethod": "GET",
+  "headers": {
+    "Host": "localhost"
+  },
+  "multiValueHeaders": {},
+  "queryStringParameters": {},
+  "multiValueQueryStringParameters": {},
+  "pathParameters": {
+    "proxy": ""
+  },
+  "stageVariables": {},
+  "requestContext": {
+    "resourcePath": "/{proxy+}",
+    "httpMethod": "GET",
+    "path": "/"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}

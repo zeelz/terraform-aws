@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless Express Application/API powered by API Gateway and Lambda
+
+Parameters:
+  DBHost:
+    Type: String
+    Default: ""
+  DBPort:
+    Type: String
+    Default: ""
+  DBUser:
+    Type: String
+    Default: ""
+  DBPassword:
+    Type: String
+    Default: ""
+  DBName:
+    Type: String
+    Default: ""
+
+Resources:
+  ExpressFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: build/lambda.handler
+      Runtime: nodejs20.x
+      Timeout: 10
+      MemorySize: 128
+    # Metadata:
+    #   BuildMethod: esbuild
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: !Ref DBPort
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+
+      Events:
+        RootApi:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+
+        ProxyApi:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            # RestApiId: !Ref ExpressApi
+  
+  # ExpressApi:
+  #   Type: AWS::Serverless::Api
+  #   Properties:
+  #     StageName: prod

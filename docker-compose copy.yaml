@@ -1,0 +1,36 @@
+services:
+
+  db:
+    container_name: db
+    image: postgres
+    env_file:
+      - .env # just $DB_PASSWORD so can be pulled in
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:5432 #since you don't want backend to use PG default port
+    # networks:
+    #   - express-network
+
+  backend:
+    container_name: backend
+    build: 
+      dockerfile: Dockerfile
+      context: .
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db # override DB_HOST
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - db
+    # networks:
+    #   - express-network
+
+# this is even not necessary 'cos compose creates a custom network and applies it to all the services
+# networks:
+#   express-network:
+#     external: true
+#     driver: bridge
+  
