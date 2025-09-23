@@ -1,0 +1,13 @@
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - echo gitlab ci > dummy
+
+test:
+  stage: test
+  script:
+    - cat dummy
