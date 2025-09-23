@@ -7,7 +7,11 @@ build:
   script:
     - echo gitlab ci > dummy
 
+  artifacts:
+    paths:
+      - build/
+
 test:
   stage: test
   script:
-    - docker --version
+    - cat build/dummy
