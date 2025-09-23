@@ -10,4 +10,4 @@ build:
 test:
   stage: test
   script:
-    - cat dummy
+    - docker --version
