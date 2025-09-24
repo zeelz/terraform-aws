@@ -2,15 +2,17 @@ stages:
   - build
   - docker-push
 
-# build:
-#   stage: build
-#   script:
-#     - mkdir build
-#     - echo gitlab ci > build/dummy
+build:
+  stage: build
+  image: hashicorp/terraform
+  script:
+    - terraform --version
+    - mkdir build
+    - echo gitlab ci > build/dummy
 
-#   artifacts:
-#     paths:
-#       - build/
+  artifacts:
+    paths:
+      - build/
 
 docker-push:
   stage: docker-push
