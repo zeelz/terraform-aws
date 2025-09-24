@@ -25,10 +25,9 @@ docker-push:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   dependencies: []
 
-  # before_script:
-  #   - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
+  before_script:
+    - docker login --username "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   script:
     # - cat build/dummy
-    - echo "$DOCKER_USER"
-    # - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
-    # - docker push $DOCKER_USER/express-gitlab
+    - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
+    - docker push $DOCKER_USER/express-gitlab
