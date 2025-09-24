@@ -2,15 +2,15 @@ stages:
   - build
   - docker-push
 
-build:
-  stage: build
-  script:
-    - mkdir build
-    - echo gitlab ci > build/dummy
+# build:
+#   stage: build
+#   script:
+#     - mkdir build
+#     - echo gitlab ci > build/dummy
 
-  artifacts:
-    paths:
-      - build/
+#   artifacts:
+#     paths:
+#       - build/
 
 docker-push:
   stage: docker-push
@@ -22,7 +22,7 @@ docker-push:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: ""
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   dependencies: []
 
   before_script:
