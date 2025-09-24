@@ -22,15 +22,15 @@ docker-push:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: ""
   rules:
-    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   dependencies: []
 
-  # before_script:
-  #   - docker login --username "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+  before_script:
+    - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
 
   script:
     # - cat build/dummy
-    - echo "DOCKER_USER = '$DOCKER_USER'"
-    - echo "Password length = ${#DOCKER_PASSWORD}"
-    # - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
-    # - docker push $DOCKER_USER/express-gitlab
+    # - echo "DOCKER_USER = '$DOCKER_USER'"
+    # - echo "Password length = ${DOCKER_PASSWORD}"
+    - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
+    - docker push $DOCKER_USER/express-gitlab
