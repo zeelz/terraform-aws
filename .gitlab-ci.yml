@@ -29,6 +29,6 @@ docker-push:
   #   - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
   script:
     # - cat build/dummy
-    - echo "user: $DOCKER_USER"
+    - echo "$DOCKER_USER"
     # - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
     # - docker push $DOCKER_USER/express-gitlab
