@@ -1,0 +1,19 @@
+FROM node:alpine
+
+WORKDIR app/
+
+COPY package.json .
+
+RUN npm ci
+
+COPY db.ts .
+
+COPY index.ts .
+
+COPY index.local.ts .
+
+COPY tsconfig.json .
+
+RUN npm run build
+
+CMD ["node", "build/index.local.js"]

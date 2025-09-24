@@ -1,6 +1,6 @@
 stages:
   - build
-  - test
+  - docker-push
 
 build:
   stage: build
@@ -12,9 +12,14 @@ build:
     paths:
       - build/
 
-test:
-  stage: test
+docker-push:
+  stage: docker-push
   image: docker:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  dependencies: []
   script:
     # - cat build/dummy
-    - docker --version
+    - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - docker push $DOCKER_USER/express-gitlab
