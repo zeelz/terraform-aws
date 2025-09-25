@@ -41,6 +41,7 @@ docker-push:
 deploy:
   rules:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  image: alpine
   stage: deploy
   script:
     - chmod +x ssh-install-deploy.sh
