@@ -43,5 +43,5 @@ deploy:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   stage: deploy
   script:
-    - chmod 600 ssh-install-deploy.sh
+    - chmod +x ssh-install-deploy.sh
     - ./ssh-install-deploy.sh
