@@ -7,7 +7,7 @@ build:
   stage: build
   image: hashicorp/terraform
   script:
-    - terraform --version
+    - terraform init
     - mkdir build
     - echo gitlab ci > build/dummy
 
