@@ -1,6 +1,7 @@
 stages:
   - build
   - docker-push
+  - deploy
 
 build:
   stage: build
@@ -24,7 +25,8 @@ docker-push:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: ""
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: never
   dependencies: []
 
   before_script:
@@ -32,7 +34,13 @@ docker-push:
 
   script:
     # - cat build/dummy
-    # - echo "DOCKER_USER = '$DOCKER_USER'"
-    # - echo "Password length = ${DOCKER_PASSWORD}"
     - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
     - docker push $DOCKER_USER/express-gitlab
+
+deploy:
+  rules:
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  stage: deploy
+  script:
+    - sudo chmod 600 ssh-install-deploy.sh
+    - ./ssh-install-deploy.sh
