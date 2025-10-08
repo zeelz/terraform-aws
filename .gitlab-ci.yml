@@ -45,4 +45,4 @@ deploy:
   stage: deploy
   script:
     - chmod +x ssh-install-deploy.sh
-    - ssh-install-deploy.sh
+    - ./ssh-install-deploy.sh
