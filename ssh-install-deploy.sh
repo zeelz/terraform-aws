@@ -7,10 +7,10 @@ apk add --no-cache openssh-client
 echo "ssh-keyscan to known_hosts"
 ssh-keyscan -H "$ZEELZ_EC2_IP" >> /tmp/known_hosts
 
-chmod 400 "$SSH_PRIVATE_KEY"
+chmod 400 "$SSH_PRIVATE_KEY" # stored as file
 
 file "$SSH_PRIVATE_KEY"
-# head -n 2 "$SSH_PRIVATE_KEY"
+head -n 2 "$SSH_PRIVATE_KEY"
 
 # ssh -o StrictHostKeyChecking=no -i "$SSH_PRIVATE_KEY" "$AWS_USER"@"$ZEELZ_EC2_IP" "echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin &&
 # docker pull $DOCKER_USER/express-gitlab &&
