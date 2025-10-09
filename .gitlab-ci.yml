@@ -5,7 +5,7 @@ stages:
 
 build:
   stage: build
-  image: hashicorp/terraform
+  image: hashicorp/terraform:light
   script:
     - terraform init
     - mkdir build
@@ -14,9 +14,9 @@ build:
   artifacts:
     paths:
       - build/
-  allow_failure: true
+  allow_failure: false
 
-docker-push:
+docker-build-push:
   stage: docker-push
   image: docker:24
   services:
@@ -38,9 +38,10 @@ docker-push:
     - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
     - docker push $DOCKER_USER/express-gitlab
 
-deploy:
+deploy-to-ec2:
   rules:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - when: never # working but disabled for now
   image: alpine
   stage: deploy
   script:
