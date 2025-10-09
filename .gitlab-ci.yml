@@ -5,7 +5,9 @@ stages:
 
 build:
   stage: build
-  image: hashicorp/terraform:latest
+  image:
+    name: hashicorp/terraform:light
+    entrypoint: [""]
   script:
     - terraform init
 
