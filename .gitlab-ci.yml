@@ -5,11 +5,9 @@ stages:
 
 build:
   stage: build
-  image: hashicorp/terraform:light
+  image: hashicorp/terraform:latest
   script:
     - terraform init
-    - mkdir build
-    - echo gitlab ci > build/dummy
 
   artifacts:
     paths:
