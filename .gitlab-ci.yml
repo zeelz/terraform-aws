@@ -1,17 +1,26 @@
 stages:
-  - build
+  - plan
   - docker-push
   - deploy
 
-build:
-  stage: build
+default:
   image:
     # name: hashicorp/terraform:light
     name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
     entrypoint: [""]
+  before_script:
+    - cd terraform
+
+init:
+  stage: .pre
+  script:
+    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate"
+  
+plan:
+  stage: plan
   script:
     - mkdir build
-    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate"
+    - terraform plan
 
     # - gitlab-terraform init
 
