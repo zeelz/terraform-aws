@@ -15,11 +15,11 @@ plan:
   image:
     name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
     entrypoint: [""]
-  before_script:
-    - cd terraform
-    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate"
+  # before_script:
   script:
     - mkdir build
+    - cd terraform
+    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
     - terraform plan
 
     # - gitlab-terraform init
