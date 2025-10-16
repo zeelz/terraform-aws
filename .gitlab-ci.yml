@@ -1,4 +1,5 @@
 stages:
+  - init
   - plan
   - docker-push
   - deploy
@@ -16,7 +17,7 @@ image:
 
 before_script:
     - cd terraform
-    
+
 init:
   stage: init
   script:
