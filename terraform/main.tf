@@ -9,7 +9,7 @@ terraform {
     # transfer state file to s3
     backend "s3" {
         bucket  = "zeelz-terraform-bucket"
-        key     = "devops-test.terraform.tfstate"
+        key     = "terraform.tfstate"
         encrypt   = true
         region    = "us-east-1"
     }
