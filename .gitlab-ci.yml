@@ -11,7 +11,11 @@ build:
     entrypoint: [""]
   script:
     - mkdir build
-    - terraform init
+    - terraform init \
+      -backend-config="bucket=$TF_STATE_S3_BUCKET" \
+      -backend-config="key=terraform.tfstate"
+
+    # - gitlab-terraform init
 
   artifacts:
     paths:
