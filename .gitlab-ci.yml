@@ -35,13 +35,19 @@ plan:
     - mkdir build
     - terraform plan
 
-    # - gitlab-terraform init
+  dependencies:
+    - init
 
   artifacts:
     paths:
       - build/
   allow_failure: false
 
+# apply:
+#   stage: apply
+#   script:
+#     - terraform apply -auto-approve
+    
 docker-build-push:
   stage: docker-push
   image: docker:24
