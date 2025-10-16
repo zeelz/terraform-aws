@@ -71,7 +71,7 @@ resource "aws_instance" "zeelz_db_ec2" {
     vpc_security_group_ids          = [aws_security_group.devops_test_sg.id]
     key_name                        = aws_key_pair.zeelz_db.key_name
     associate_public_ip_address     = true
-    # user_data                       = file("${path.module}/user-data.sh")
+    user_data                       = file("${path.module}/user-data.sh")
 }
 
 output "zeelz_db_ec2_ip" {
