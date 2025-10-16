@@ -3,13 +3,13 @@ stages:
   - docker-push
   - deploy
 
-default:
-  image:
-    # name: hashicorp/terraform:light
-    name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
-    entrypoint: [""]
-  before_script:
-    - cd terraform
+# default:
+image:
+  # name: hashicorp/terraform:light
+  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  entrypoint: [""]
+before_script:
+  - cd terraform
 
 init:
   stage: .pre
