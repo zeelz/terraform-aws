@@ -20,7 +20,7 @@ terraform {
 
 provider "aws" {
     region  = "us-east-1"
-    profile = "zeelz"
+    # profile = "zeelz"
 }
 
 # this bucket has been rm'ed from tf so when i destory everything it won't be affected
