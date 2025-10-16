@@ -1,5 +1,4 @@
 stages:
-  - init
   - plan
   - docker-push
   - deploy
@@ -17,10 +16,6 @@ image:
 
 before_script:
     - cd terraform
-
-init:
-  stage: init
-  script:
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
    
 plan:
