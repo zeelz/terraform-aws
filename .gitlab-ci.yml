@@ -1,4 +1,5 @@
 stages:
+  - init
   - plan
   - docker-push
   - deploy
@@ -10,14 +11,24 @@ stages:
 #   stage: .pre
 #   script:
 
+variables:
+  TF_ROOT: "terraform"
+
 image:
   name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   entrypoint: [""]
 
 before_script:
-    - cd terraform
+    - cd $TF_ROOT
+
+init:
+  stage: init
+  script:
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
-   
+  artifacts:
+    paths:
+      - "$TF_ROOT/.terraform"
+
 plan:
   stage: plan
   script:
