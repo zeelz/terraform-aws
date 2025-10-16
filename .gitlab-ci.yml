@@ -1,6 +1,6 @@
 stages:
-  - init
   - plan
+  - apply
   - docker-push
   - deploy
 
@@ -20,14 +20,8 @@ image:
 
 before_script:
     - cd $TF_ROOT
-
-init:
-  stage: init
-  script:
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
-  artifacts:
-    paths:
-      - "$TF_ROOT/.terraform"
+  
 
 plan:
   stage: plan
@@ -35,18 +29,15 @@ plan:
     - mkdir build
     - terraform plan
 
-  dependencies:
-    - init
-
   artifacts:
     paths:
       - build/
   allow_failure: false
 
-# apply:
-#   stage: apply
-#   script:
-#     - terraform apply -auto-approve
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve
     
 docker-build-push:
   stage: docker-push
