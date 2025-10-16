@@ -58,9 +58,9 @@ resource "aws_security_group" "devops_test_sg" {
     }
     egress {
         cidr_blocks         = ["0.0.0.0/0"]
-        protocol            = "tcp"
+        protocol            = "-1" #all protocols
         to_port             = 0
-        from_port           = 65535
+        from_port           = 0
     }
 }
 
