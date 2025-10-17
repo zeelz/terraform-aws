@@ -37,7 +37,7 @@ plan:
 apply:
   stage: apply
   script:
-    - terraform destroy -auto-approve
+    - terraform apply -auto-approve
     
 docker-build-push:
   stage: docker-push
