@@ -4,13 +4,6 @@ stages:
   - docker-push
   - deploy
 
-# default:
-
-
-# init:
-#   stage: .pre
-#   script:
-
 variables:
   TF_ROOT: "terraform"
 
@@ -22,7 +15,6 @@ before_script:
     - cd $TF_ROOT
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
   
-
 plan:
   stage: plan
   script:
@@ -63,8 +55,8 @@ docker-build-push:
 
 deploy-to-ec2:
   rules:
-    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: never # working but disabled for now
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # - when: never # working but disabled for now
   image: alpine
   stage: deploy
   script:
