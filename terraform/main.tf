@@ -56,6 +56,12 @@ resource "aws_security_group" "devops_test_sg" {
         to_port             = 22
         from_port           = 22
     }
+    ingress {
+        cidr_blocks         = ["0.0.0.0/0"]
+        protocol            = "tcp"
+        to_port             = 5500
+        from_port           = 5500
+    }
     egress {
         cidr_blocks         = ["0.0.0.0/0"]
         protocol            = "-1" #all protocols
