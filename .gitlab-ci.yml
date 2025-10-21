@@ -33,7 +33,8 @@ plan:
 
 apply:
   stage: apply
-  needs: ["plan"] #connection
+  rules:
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
