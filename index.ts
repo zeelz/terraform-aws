@@ -9,7 +9,7 @@ app.get('/', (req: Request, res: Response) => {
     res.json({status: "all good 👍"})
 })
 
-app.post('/users', async (req, res) => {
+app.post('/users', async (req: Request, res: Response) => {
   const { name, email } = req.body;
 
   try {
