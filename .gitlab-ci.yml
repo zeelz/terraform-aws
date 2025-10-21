@@ -28,9 +28,12 @@ plan:
     paths:
       - build/
   allow_failure: false
+  rules:
+    - when: never # working but disabled
 
 apply:
   stage: apply
+  needs: [plan] #connection
   extends:
     - .cd_root_and_init
   script:
@@ -41,7 +44,7 @@ apply:
       curl -X PUT \
         --form "value=$EC2_PUBLIC_IP" \
         --header "PRIVATE_TOKEN=$GITLAB_TOKEN" \
-        "https://gitlab.com/api/v4/projects/75392331/variables/EC2_PUBLIC_IP"
+        "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
       
     
 docker-build-push:
@@ -69,7 +72,7 @@ docker-build-push:
 deploy-to-ec2:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: never # working but disabled for now
+    # - when: never # working but disabled for now
   image: alpine
   stage: deploy
   script:
