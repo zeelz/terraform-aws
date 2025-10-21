@@ -33,7 +33,7 @@ plan:
 
 apply:
   stage: apply
-  needs: [plan] #connection
+  needs: ["plan"] #connection
   extends:
     - .cd_root_and_init
   script:
