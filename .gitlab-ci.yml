@@ -19,7 +19,7 @@ image:
 plan:
   stage: plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -34,7 +34,7 @@ plan:
 apply:
   stage: apply
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -72,8 +72,8 @@ docker-build-push:
 
 deploy-to-ec2:
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: never # working but disabled for now
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # - when: never # working but disabled for now
   image: alpine
   stage: deploy
   script:
