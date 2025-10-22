@@ -48,11 +48,11 @@ jobs:
             - name: initial terraform
               run: terraform init
 
-            - name: terraform plan
-              run: terraform plan -no-color
+            #- name: terraform plan
+            #  run: terraform plan -no-color
 
-            - name: terraform apply
-              run: terraform apply -auto-approve
+            #- name: terraform apply
+            #  run: terraform apply -auto-approve
 
-            #- name: terraform destroy
-            #  run: terraform destroy -auto-approve
+            - name: terraform destroy
+              run: terraform destroy -auto-approve
