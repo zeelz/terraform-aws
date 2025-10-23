@@ -41,7 +41,7 @@ apply:
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply-auto-approve # -destroy 
+    - terraform apply -auto-approve # -destroy 
     # update GH settings env var with the new IP
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
     - |
