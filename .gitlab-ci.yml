@@ -36,7 +36,7 @@ apply:
   rules:
     # - when: never # working but disabled
   needs:
-    - docker-build-push
+    - "docker-build-push"
   extends:
     - .cd_root_and_init
   script:
