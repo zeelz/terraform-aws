@@ -34,18 +34,20 @@ plan:
 apply:
   stage: apply
   rules:
-    - when: never # working but disabled
+    # - when: never # working but disabled
+  needs:
+    - docker-build-push
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply -destroy -auto-approve
+    - terraform apply-auto-approve # -destroy 
     # update GH settings env var with the new IP
-    # - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    # - |
-    #   curl -X PUT \
-    #     --form "value=$EC2_PUBLIC_IP" \
-    #     --header "PRIVATE_TOKEN=$GITLAB_TOKEN" \
-    #     "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
+    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
+    - |
+      curl -X PUT \
+        --form "value=$EC2_PUBLIC_IP" \
+        --header "PRIVATE_TOKEN=$GITLAB_TOKEN" \
+        "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
       
     
 docker-build-push:
@@ -53,13 +55,13 @@ docker-build-push:
   image: docker:24
   services:
     - docker:24-dind
+  rules:
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    # - when: never
   variables:
     DOCKER_TLS_CERTDIR: ""
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: ""
-  rules:
-    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: never
   dependencies: []
 
   before_script:
@@ -71,11 +73,12 @@ docker-build-push:
     - docker push $DOCKER_USER/express-gitlab
 
 deploy-to-ec2:
+  image: alpine
+  stage: deploy
+  needs: [apply]
   rules:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     # - when: never # working but disabled for now
-  image: alpine
-  stage: deploy
   script:
     - chmod +x ssh-install-deploy.sh
     - ./ssh-install-deploy.sh

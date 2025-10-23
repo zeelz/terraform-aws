@@ -10,14 +10,14 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.post('/users', async (req: Request, res: Response) => {
-  const { name, email } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const result = await pool.query(
-      `INSERT INTO users (name, email)
-       VALUES ($1, $2)
+      `INSERT INTO users (name, email, password)
+       VALUES ($1, $2, $3)
        RETURNING *`,
-      [name, email]
+      [name, email, password]
     );
 
     res.status(201).json(result.rows[0]);
