@@ -3,24 +3,6 @@ stages:
   - apply
   - docker-push
   - deploy
-
-apply:
-  stage: apply
-  rules:
-    # - when: never # working but disabled
-  needs:
-    - "docker-build-push"
-  extends:
-    - .cd_root_and_init
-  script:
-    - terraform apply-auto-approve # -destroy 
-    # update GH settings env var with the new IP
-    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - |
-      curl -X PUT \
-        --form "value=$EC2_PUBLIC_IP" \
-        --header "PRIVATE_TOKEN=$GITLAB_TOKEN" \
-        "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
       
     
 docker-build-push:
@@ -56,7 +38,7 @@ deploy-to-ec2:
     - chmod +x ssh-install-deploy.sh
     - ./ssh-install-deploy.sh
 
-    
+
 variables:
   TF_ROOT: "terraform"
 
@@ -83,3 +65,22 @@ plan:
     paths:
       - build/
   allow_failure: false
+
+
+apply:
+  stage: apply
+  rules:
+    # - when: never # working but disabled
+  needs:
+    - "docker-build-push"
+  extends:
+    - .cd_root_and_init
+  script:
+    - terraform apply-auto-approve # -destroy 
+    # update GH settings env var with the new IP
+    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
+    - |
+      curl -X PUT \
+        --form "value=$EC2_PUBLIC_IP" \
+        --header "PRIVATE_TOKEN=$GITLAB_TOKEN" \
+        "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
