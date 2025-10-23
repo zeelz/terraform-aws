@@ -4,33 +4,6 @@ stages:
   - docker-push
   - deploy
 
-variables:
-  TF_ROOT: "terraform"
-
-image:
-  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
-  entrypoint: [""]
-
-.cd_root_and_init:
-  before_script:
-    - cd $TF_ROOT
-    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
-  
-plan:
-  stage: plan
-  rules:
-    - when: never # working but disabled
-  extends:
-    - .cd_root_and_init
-  script:
-    - mkdir build
-    - terraform plan
-
-  artifacts:
-    paths:
-      - build/
-  allow_failure: false
-
 apply:
   stage: apply
   rules:
@@ -82,3 +55,31 @@ deploy-to-ec2:
   script:
     - chmod +x ssh-install-deploy.sh
     - ./ssh-install-deploy.sh
+
+    
+variables:
+  TF_ROOT: "terraform"
+
+image:
+  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  entrypoint: [""]
+
+.cd_root_and_init:
+  before_script:
+    - cd $TF_ROOT
+    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
+  
+plan:
+  stage: plan
+  rules:
+    - when: never # working but disabled
+  extends:
+    - .cd_root_and_init
+  script:
+    - mkdir build
+    - terraform plan
+
+  artifacts:
+    paths:
+      - build/
+  allow_failure: false
