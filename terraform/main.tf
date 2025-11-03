@@ -55,7 +55,8 @@ resource "aws_security_group" "devops_test_sg" {
 }
 
 resource "aws_instance" "zeelz_db_ec2" {
-    ami                             = "ami-0bdd88bd06d16ba03" #"ami-08982f1c5bf93d976"
+    ami                             = "ami-0ecb62995f68bb549" #ubuntu
+    # ami                             = "ami-08982f1c5bf93d976" #amazon linux 2023
     instance_type                   = "t3.small" #upgraded from t2.micro 1vpcu/1gb mb => 2vcpu/2gb mb 'cos of k8s
     # vpc_security_group_ids          = ["sg-033eebe707ffaa9c2"]
     vpc_security_group_ids          = [aws_security_group.devops_test_sg.id]
