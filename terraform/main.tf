@@ -58,21 +58,27 @@ resource "aws_instance" "zeelz_db_ec2" {
     ami                             = "ami-0ecb62995f68bb549" #ubuntu
     # ami                             = "ami-08982f1c5bf93d976" #amazon linux 2023
     instance_type                   = "t3.small" #upgraded from t2.micro 1vpcu/1gb mb => 2vcpu/2gb mb 'cos of k8s
-    # vpc_security_group_ids          = ["sg-033eebe707ffaa9c2"]
     vpc_security_group_ids          = [aws_security_group.devops_test_sg.id]
+    # vpc_security_group_ids          = ["sg-033eebe707ffaa9c2"]
     key_name                        = aws_key_pair.zeelz_db.key_name
     associate_public_ip_address     = true
-    user_data                       = file("${path.module}/user-data.sh")
+    user_data                       = file("${path.module}/user-data-${var.os_type}.sh")
+}
+
+variable "os_type" {
+  type          = string
+  default       = "ubuntu" # amazon | ubuntu
+  description   = "use this value to load user-data"
 }
 
 variable "ZEELZ_MACHINE_SSH_PUBLIC_KEY" {
-    type                     = string # supplied from env var with TF_VAR_ prefix
+    type    = string # supplied from env var with TF_VAR_ prefix
 }
 
 variable "VPC_ID_DEFAULT" {
-    type                     = string
+    type    = string
 }
 
 output "zeelz_db_ec2_ip" {
-    value                  = aws_instance.zeelz_db_ec2.public_ip
+    value   = aws_instance.zeelz_db_ec2.public_ip
 }
