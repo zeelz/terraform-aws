@@ -17,7 +17,7 @@ echo \
 # update package index again
 sudo apt update -y
 
-sudo install -y docker-ce docker-ce-cli containerd.io
+sudo apt install -y docker-ce docker-ce-cli containerd.io
 
 # start and enable docker as a service
 sudo systemctl start docker
