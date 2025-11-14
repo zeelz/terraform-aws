@@ -73,13 +73,13 @@ docker-build-push:
     - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
     - docker push $DOCKER_USER/express-gitlab
 
-deploy-to-ec2:
-  image: alpine
-  stage: deploy
-  needs: [docker-build-push]
-  rules:
-    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    # - when: never # working but disabled for now
-  script:
-    - chmod +x ssh-install-deploy.sh
-    - ./ssh-install-deploy.sh
+# deploy-to-ec2:
+#   image: alpine
+#   stage: deploy
+#   needs: [docker-build-push]
+#   rules:
+#     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#     # - when: never # working but disabled for now
+#   script:
+#     - chmod +x ssh-install-deploy.sh
+#     - ./ssh-install-deploy.sh
