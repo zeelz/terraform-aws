@@ -1,9 +1,20 @@
 import express, {Express, Request, Response} from 'express';
 import { pool } from './db';
 
+import { config } from 'dotenv';
+import { createServer } from 'https';
+import fs from 'fs';
+config()
+const PORT = Number(process.env.PORT )|| 3000
+
 export const app:Express = express()
 
 app.use(express.json())
+
+// const server = createServer({
+//   cert: fs.readFileSync("./cert/keme.local.pem"),
+//   key: fs.readFileSync("./cert/keme.local-key.pem")
+// }, app)
 
 app.get('/', (req: Request, res: Response) => {
     res.json({status: "all good 👍"})
@@ -40,3 +51,6 @@ app.get('/users', async (req: Request, res: Response) => {
     }
 
 })
+
+// server.listen(PORT, "0.0.0.0", () => console.log('App started on port', PORT))
+app.listen(PORT, "0.0.0.0", () => console.log('App started on port', PORT))

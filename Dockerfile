@@ -2,14 +2,12 @@ FROM node:alpine
 
 WORKDIR /express-app
 
-COPY package.json .
+COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+COPY db.ts index.ts tsconfig.json ./
 
 RUN npm run build
-
-# EXPOSE 5005
 
 CMD ["node", "./build/index.js"]

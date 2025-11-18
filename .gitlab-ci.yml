@@ -3,8 +3,6 @@ stages:
   - apply
   - docker-push
   - deploy
-      
-
 
 variables:
   TF_ROOT: "terraform"
@@ -13,12 +11,13 @@ image:
   name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   entrypoint: [""]
 
+# template
 .cd_root_and_init:
   before_script:
     - cd $TF_ROOT
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
   
-plan:
+terraform-plan:
   stage: plan
   rules:
     # - when: never # working but disabled
@@ -34,7 +33,7 @@ plan:
   allow_failure: false
 
 
-apply:
+terraform-apply:
   stage: apply
   rules:
     # - when: never # working but disabled
@@ -82,4 +81,4 @@ docker-build-push:
 #     # - when: never # working but disabled for now
 #   script:
 #     - chmod +x ssh-install-deploy.sh
-#     - ./ssh-install-deploy.sh
+#     - ./gitlab-ssh-install-deploy.sh

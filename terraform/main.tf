@@ -7,23 +7,36 @@ terraform {
     }
 
     # transfer state file to s3
-    backend "s3" {} #values passed as -backend-config
-
-    # backend "s3" {
-    #   bucket    = "zeelz-terraform-bucket"
-    #   key       = "terraform.tfstate"
-    #   encrypt   = true
-    #   region    = "us-east-1"
-    #   profile   = "zeelz"
-    # }
+    backend "s3" {
+        bucket  = "zeelz-terraform-bucket"
+        key     = "terraform.tfstate"
+        encrypt   = true
+        region    = "us-east-1"
+    }
 }
 
 provider "aws" {
     region  = "us-east-1"
-    # profile = "zeelz"
 }
 
-# this bucket has been rm'ed from tf so when i destory everything it won't be affected
+variable "ZEELZ_MACHINE_SSH_PUBLIC_KEY" {
+    type    = string # automatically supplied from env var with TF_VAR_ prefix
+}
+
+variable "VPC_ID_DEFAULT" {
+    type    = string
+}
+
+variable "ssh_private_key" {
+  type          = string
+  description   = "stored in gitlab console"
+}
+
+variable "aws_ami" {
+  type          = string
+  description   = "value in gitlab env vars"
+}
+# this bucket resource was commented to rm it from tf mgmt so when everything is destoryed it won't be affected
 # it is used for state mgmt - backend
 
 # resource "aws_s3_bucket" "t_bucket" {
@@ -32,17 +45,13 @@ provider "aws" {
 
 resource "aws_key_pair" "zeelz_db" {
     key_name   = "zeelz_db_ec2"
+    # public_key = var.ZEELZ_MACHINE_SSH_PUBLIC_KEY
     public_key = var.ssh_private_key
-}
-
-variable "ssh_private_key" {
-  type          = string
-  description   = "stored in gitlab console"
 }
 
 resource "aws_security_group" "devops_test_sg" {
     name      = "devops_test_sg"
-    vpc_id    = "vpc-04f9481b7c282ba7b"
+    vpc_id    = var.VPC_ID_DEFAULT #aws_vpc.main.id #
 
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
@@ -53,32 +62,40 @@ resource "aws_security_group" "devops_test_sg" {
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
         protocol            = "tcp"
-        to_port             = 22
-        from_port           = 22
+        to_port             = 5500
+        from_port           = 5500
     }
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
         protocol            = "tcp"
-        to_port             = 5500
-        from_port           = 5500
+        to_port             = 22
+        from_port           = 22
     }
     egress {
         cidr_blocks         = ["0.0.0.0/0"]
-        protocol            = "-1" #all protocols
+        protocol            = "-1" # for all protocols
         to_port             = 0
         from_port           = 0
     }
 }
 
 resource "aws_instance" "zeelz_db_ec2" {
-    ami                             = "ami-0ecb62995f68bb549" #ubuntu
-    instance_type                   = "t3.small" #minimum rq for k8s 2vcpu/2gb mb
+    ami                             = "${var.aws_ami}"
+    # ami                             = "ami-08982f1c5bf93d976" #amazon linux 2023
+    instance_type                   = "t3.small" #upgraded from t2.micro 1vpcu/1gb mb => 2vcpu/2gb mb 'cos of k8s
     vpc_security_group_ids          = [aws_security_group.devops_test_sg.id]
+    # vpc_security_group_ids          = ["sg-033eebe707ffaa9c2"]
     key_name                        = aws_key_pair.zeelz_db.key_name
     associate_public_ip_address     = true
-    user_data                       = file("${path.module}/user-data.sh")
+    user_data                       = file("${path.module}/user-data-${var.os_type}.sh")
+}
+
+variable "os_type" {
+  type          = string
+  default       = "ubuntu" # amazon | ubuntu
+  description   = "use this value to load user-data"
 }
 
 output "zeelz_db_ec2_ip" {
-    value = aws_instance.zeelz_db_ec2.public_ip
+    value   = aws_instance.zeelz_db_ec2.public_ip
 }
