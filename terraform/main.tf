@@ -19,20 +19,16 @@ provider "aws" {
     region  = "us-east-1"
 }
 
-variable "ZEELZ_MACHINE_SSH_PUBLIC_KEY" {
+variable "VPC_ID_DEFAULT" {
     type    = string # automatically supplied from env var with TF_VAR_ prefix
 }
 
-variable "VPC_ID_DEFAULT" {
-    type    = string
-}
-
-variable "ssh_private_key" {
+variable "SSH_PUBLIC_KEY" {
   type          = string
   description   = "stored in gitlab console"
 }
 
-variable "aws_ami" {
+variable "AWS_AMI" {
   type          = string
   description   = "value in gitlab env vars"
 }
@@ -45,8 +41,7 @@ variable "aws_ami" {
 
 resource "aws_key_pair" "zeelz_db" {
     key_name   = "zeelz_db_ec2"
-    # public_key = var.ZEELZ_MACHINE_SSH_PUBLIC_KEY
-    public_key = var.ssh_private_key
+    public_key = var.SSH_PUBLIC_KEY
 }
 
 resource "aws_security_group" "devops_test_sg" {
@@ -80,7 +75,7 @@ resource "aws_security_group" "devops_test_sg" {
 }
 
 resource "aws_instance" "zeelz_db_ec2" {
-    ami                             = "${var.aws_ami}"
+    ami                             = "${var.AWS_AMI}"
     # ami                             = "ami-08982f1c5bf93d976" #amazon linux 2023
     instance_type                   = "t3.small" #upgraded from t2.micro 1vpcu/1gb mb => 2vcpu/2gb mb 'cos of k8s
     vpc_security_group_ids          = [aws_security_group.devops_test_sg.id]
