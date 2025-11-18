@@ -1,0 +1,64 @@
+name: Provision and deploy
+
+on:
+    push:
+      branches: [dev]
+
+    # workflow_run:
+    #     workflows: ["Build Push nodejs"]
+    #     types: completed
+        
+
+jobs:
+    provision_deploy:
+        # if: github.event.workflow_run.conclusion == 'success'
+        runs-on: ubuntu-latest
+        env: # TF_VAR_ values are auto injected into tf input variables 
+          TF_VAR_SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          TF_VAR_VPC_ID_DEFAULT: ${{ secrets.VPC_ID_DEFAULT }}
+          TF_ROOT: "terraform" # tis standard
+
+        defaults:
+          run:
+            working-directory: ${{ env.TF_ROOT }}
+
+        steps:
+
+            - name: checkout
+              uses: actions/checkout@v4
+              with:
+                # ref: ""
+                # path: ""
+                sparse-checkout: "terraform"
+                sparse-checkout-cone-mode: false
+
+            - name: Configure AWS Credentials # not needed for tf, just passed those cred as env vars
+              uses: aws-actions/configure-aws-credentials@v5.0.0
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: us-east-1
+
+            - name: terraform setup
+              uses: hashicorp/setup-terraform@v3
+
+            #- name: mv files to root $GITHUB_WORKSPACE
+            #  run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
+
+            - name: initial terraform
+              run: terraform init
+
+            #- name: terraform plan
+              #run: terraform plan -no-color
+
+            #- name: terraform apply
+              #run: terraform apply -auto-approve
+
+            # - name: Send EC2 IP to Slack
+            #   run: |
+            #     EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+            #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+            #     ${{ vars.SLACK_WEBHOOK_URL }}
+
+            - name: terraform destroy
+              run: terraform apply -destroy -auto-approve

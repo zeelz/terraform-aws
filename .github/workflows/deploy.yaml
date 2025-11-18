@@ -1,0 +1,34 @@
+name: "Build Push nodejs"
+
+on:
+    push
+
+jobs:
+    deploy:
+        if: false #disbled
+        runs-on: ubuntu-latest
+        env:
+            DOCKER_USER: ${{ secrets.DOCKER_USER }}
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    # defaults:
+        #     run:
+        #         shell: bash
+        #         working-directory: "app"
+        steps:
+            - name: checkout
+              uses: actions/checkout@v4
+
+            - name: npm install
+              run: npm ci
+
+            - name: setup docker
+              uses: docker/setup-docker-action@v4
+
+            - name: docker build
+              run: docker build -t ${DOCKER_USER}"/node-app-devops-test" .
+
+            - name: docker login
+              run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+            - name: docker push
+              run: docker push ${DOCKER_USER}"/node-app-devops-test"
