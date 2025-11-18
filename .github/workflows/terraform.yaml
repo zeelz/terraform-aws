@@ -49,17 +49,17 @@ jobs:
             - name: initial terraform
               run: terraform init
 
-            #- name: terraform plan
-              #run: terraform plan -no-color
+            - name: terraform plan
+              run: terraform plan -no-color
 
-            #- name: terraform apply
-              #run: terraform apply -auto-approve
+            - name: terraform apply
+              run: terraform apply -auto-approve
 
-            # - name: Send EC2 IP to Slack
-            #   run: |
-            #     EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
-            #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
-            #     ${{ vars.SLACK_WEBHOOK_URL }}
+            - name: Send EC2 IP to Slack
+              run: |
+                EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+                curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+                ${{ vars.SLACK_WEBHOOK_URL }}
 
-            - name: terraform destroy
-              run: terraform apply -destroy -auto-approve
+            # - name: terraform destroy
+            #   run: terraform apply -destroy -auto-approve
