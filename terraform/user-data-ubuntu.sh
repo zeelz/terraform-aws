@@ -30,17 +30,19 @@ sudo usermod -aG docker ubuntu
 sudo newgrp docker
 
 # they say newgrp breaks execution flow. let's see
-echo pull docker image
-docker pull zeelz/node-app-devops-test
+# flow didn't break. docker pulled and ran ✅
+# echo pull docker image
+# docker pull zeelz/node-app-devops-test
 
-echo run docker container
-docker run -d --restart unless-stopped -p 3300:3300 zeelz/node-app-devops-test
+# echo run docker container
+# docker run -d --restart unless-stopped -p 3300:3300 zeelz/node-app-devops-test
 
 
+# but minikube won't run cos' cloud-init is running this entire script as root, which minikube doesn't like
+# suggestion is to run minikube with systemd service
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+sudo dpkg -i minikube_latest_amd64.deb
 
-# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
-# sudo dpkg -i minikube_latest_amd64.deb
+minikube start
 
-# minikube start
-
-# alias kubectl='minikube kubectl --'
+alias kubectl='minikube kubectl --'
