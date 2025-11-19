@@ -40,6 +40,7 @@ sudo newgrp docker
 
 # but minikube won't run cos' cloud-init is running this entire script as root, which minikube doesn't like
 # suggestion is to run minikube with systemd service
+# Exiting due to DRV_AS_ROOT: The "docker" driver should not be used with root privileges.
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
 sudo dpkg -i minikube_latest_amd64.deb
 
