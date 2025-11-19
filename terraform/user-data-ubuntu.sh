@@ -29,15 +29,18 @@ sudo usermod -aG docker ubuntu
 # activate group assignment
 sudo newgrp docker
 
-# echo pull docker image
-# docker pull zeelz/node-app-devops-test
+# they say newgrp breaks execution flow. let's see
+echo pull docker image
+docker pull zeelz/node-app-devops-test
 
-# echo run docker container
-# docker run -d --restart unless-stopped -p 3300:3300 zeelz/node-app-devops-test
+echo run docker container
+docker run -d --restart unless-stopped -p 3300:3300 zeelz/node-app-devops-test
 
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
-sudo dpkg -i minikube_latest_amd64.deb
 
-minikube start
 
-alias kubectl='minikube kubectl --'
+# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+# sudo dpkg -i minikube_latest_amd64.deb
+
+# minikube start
+
+# alias kubectl='minikube kubectl --'
