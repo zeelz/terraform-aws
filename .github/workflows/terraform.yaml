@@ -62,5 +62,5 @@ jobs:
             #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
             #     ${{ vars.SLACK_WEBHOOK_URL }}
 
-            # - name: terraform destroy
-            #   run: terraform apply -destroy -auto-approve
+            - name: terraform destroy
+              run: terraform apply -destroy -auto-approve
