@@ -86,7 +86,7 @@ resource "aws_instance" "zeelz_db_ec2" {
     # default 8gb not enough for multi-node minikube
     root_block_device {
       volume_size                   = 16
-      volume_type                   = gp3
+      volume_type                   = "gp3"
     }
 }
 
