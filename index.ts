@@ -5,8 +5,8 @@ import { pool } from './db';
 // import { createServer } from 'https';
 // import fs from 'fs';
 
-// const PORT = Number(process.env.PORT ) || 3000
-const PORT = 3000
+const PORT = Number(process.env.PORT ) || 3000
+// const PORT = 3000
 
 export const app:Express = express()
 

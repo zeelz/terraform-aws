@@ -1,0 +1,35 @@
+version: 1.0
+runtime: nodejs22
+
+build:
+  commands:
+    pre-build:
+
+    build:
+      - npm run build
+
+    post-build:
+
+  env:
+    - name: DUMMY
+      value: "put vars for build stage here"
+
+run:
+  runtime-version: 22
+
+  command:
+    - node build/index.js
+  network:
+    port: 3000 # AppRunner will set this value to PORT
+  
+  env:
+    - name: DB_USER
+      value: "zeelz"
+    - name: DB_NAME
+      value: "postgres"
+
+  secrets:
+    - name: DB_HOST
+      value-from: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-host"
+    - name: DB_PORT
+      value-from: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-port"
