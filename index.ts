@@ -1,11 +1,12 @@
 import express, {Express, Request, Response} from 'express';
 import { pool } from './db';
 
-import { config } from 'dotenv';
-import { createServer } from 'https';
-import fs from 'fs';
-config()
-const PORT = Number(process.env.PORT )|| 3000
+// import { config } from 'dotenv'; config();
+// import { createServer } from 'https';
+// import fs from 'fs';
+
+// const PORT = Number(process.env.PORT ) || 3000
+const PORT = 3000
 
 export const app:Express = express()
 
