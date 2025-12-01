@@ -11,10 +11,10 @@ build:
       value: "put vars for build stage here"
 
 run:
-  runtime-version: 22
+  # runtime-version: 22
 
   command: "node build/index.js"
-  
+
   network:
     port: 3000 # AppRunner will set this value to PORT
   
