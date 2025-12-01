@@ -13,8 +13,8 @@ build:
 run:
   runtime-version: 22
 
-  command:
-    - node build/index.js
+  command: "node build/index.js"
+  
   network:
     port: 3000 # AppRunner will set this value to PORT
   
@@ -26,6 +26,6 @@ run:
 
   secrets:
     - name: DB_HOST
-      value-from: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-host"
+      value-from: "arn:aws:ssm:us-east-1:84958389574837:parameter/express-app2-db-host"
     - name: DB_PORT
-      value-from: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-port"
+      value-from: "arn:aws:ssm:us-east-1:84958389574837:parameter/express-app2-db-port"
