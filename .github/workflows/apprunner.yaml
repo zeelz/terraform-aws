@@ -40,6 +40,6 @@ jobs:
                 memory : 1
                 wait-for-service-stability-seconds: 600
                 instance-role-arn: ${{ secrets.APPRUNNER_INSTANCE_ROLE }}
-                copy-env-vars:
-                    - DB_USER: "zeelz"
-                    - DB_NAME: "postgres"
+                copy-env-vars: |
+                    DB_USER: "zeelz"
+                    DB_NAME: "postgres"
