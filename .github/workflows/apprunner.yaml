@@ -32,7 +32,7 @@ jobs:
                 repo: https://github.com/${{ github.repository }}
                 branch: ${{ github.ref }}
                 runtime: NODEJS_18
-                build-command: npm install
+                build-command: npm install-build
                 start-command: node build/index.js
                 port: 18000
                 region: ${{ env.REGION }}
