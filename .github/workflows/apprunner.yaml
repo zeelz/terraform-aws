@@ -7,13 +7,9 @@ on:
 jobs:
     apprunner_deploy:
         runs-on: ubuntu-latest
-
+        
         env:
             REGION: "us-east-1"
-            DB_USER: "zeelz"
-            DB_NAME: "postgres"
-            DB_HOST: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-host"
-            DB_PORT: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-port"
 
         steps:
 
@@ -28,6 +24,11 @@ jobs:
                 aws-region: ${{ env.REGION }}
 
             - name: App Runner Deploy
+              env:
+                DB_USER: "zeelz"
+                DB_NAME: "postgres"
+                DB_HOST: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-host"
+                DB_PORT: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-port"
               id: deploy-apprunner
               uses: awslabs/amazon-app-runner-deploy@main # Deploy app runner service
               with:
