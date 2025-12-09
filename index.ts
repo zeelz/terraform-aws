@@ -18,7 +18,7 @@ app.use(express.json())
 // }, app)
 
 app.get('/', (req: Request, res: Response) => {
-    res.json({status: "all good 👍"})
+    res.json({status: "apprunner deployed 👍"})
 })
 
 app.post('/users', async (req: Request, res: Response) => {
