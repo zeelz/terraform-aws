@@ -10,6 +10,10 @@ jobs:
 
         env:
             REGION: "us-east-1"
+            DB_USER: "zeelz"
+            DB_NAME: "postgres"
+            DB_HOST: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-host"
+            DB_PORT: "arn:aws:ssm:us-east-1:553917154144:parameter/express-app2-db-port"
 
         steps:
 
@@ -41,5 +45,8 @@ jobs:
                 wait-for-service-stability-seconds: 600
                 instance-role-arn: ${{ secrets.APPRUNNER_INSTANCE_ROLE }}
                 copy-env-vars: |
-                    DB_USER: "zeelz"
-                    DB_NAME: "postgres"
+                    DB_USER
+                    DB_NAME
+                copy-secret-env-vars: |
+                    DB_HOST
+                    DB_PORT
