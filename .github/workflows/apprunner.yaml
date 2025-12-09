@@ -36,7 +36,7 @@ jobs:
                 start-command: node build/index.js
                 port: 18000
                 region: ${{ env.REGION }}
-                cpu : 1
-                memory : "500Mi"
+                cpu : 0.5
+                memory : 0.5
                 wait-for-service-stability-seconds: 600
                 instance-role-arn: ${{ secrets.APPRUNNER_INSTANCE_ROLE }}
