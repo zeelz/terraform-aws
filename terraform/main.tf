@@ -93,7 +93,7 @@ resource "aws_instance" "zeelz_db_ec2" {
 variable "os_type" {
   type          = string
   default       = "ubuntu" # amazon | ubuntu
-  description   = "use this value to load user-data"
+  description   = "this variable defines the user-data file to load"
 }
 
 output "zeelz_db_ec2_ip" {
