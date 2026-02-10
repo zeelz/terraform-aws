@@ -44,8 +44,11 @@ sudo newgrp docker
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
 sudo dpkg -i minikube_latest_amd64.deb
 
+# Reboot
+sudo systemctl reboot
+
 # minikube start ## minikube won't start with docker driver as root
 sudo -u ubuntu minikube start --driver=docker
 
 
-alias kubectl='minikube kubectl --'
+echo kubectl='minikube kubectl --' >> ~/.bashrc
