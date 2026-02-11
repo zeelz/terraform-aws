@@ -65,3 +65,7 @@ sudo usermod -aG microk8s ubuntu
 sudo chown -R ubuntu ~/.kube
 
 newgrp microk8s
+
+microk8s helm3 repo add headlamp https://kubernetes-sigs.github.io/headlamp/
+
+microk8s heml3 upgrade --install headlamp-dash headlamp/headlamp --namespace kube-system
