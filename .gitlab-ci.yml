@@ -45,7 +45,7 @@ terraform-apply:
 
     # update GH settings env var with the new IP
     # - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - CITY="vancouver, canada"
+    - EC2_PUBLIC_IP="vancouver, canada"
     - |
       curl -X PUT \
         --form "value=$EC2_PUBLIC_IP" \
