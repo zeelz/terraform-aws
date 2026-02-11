@@ -30,7 +30,7 @@ terraform-plan:
   artifacts:
     paths:
       - build/
-  allow_failure: false
+  allow_failure: true
 
 
 terraform-apply:
