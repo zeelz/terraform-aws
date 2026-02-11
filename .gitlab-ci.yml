@@ -25,7 +25,7 @@ terraform-plan:
     - .cd_root_and_init
   script:
     - mkdir build
-    - terraform plan
+    # - terraform plan
 
   artifacts:
     paths:
@@ -40,16 +40,18 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply -auto-approve
+    # - terraform apply -auto-approve
     # - terraform apply -auto-approve -destroy
 
     # update GH settings env var with the new IP
-    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - |
-      curl -X PUT \
-        --form "value=$EC2_PUBLIC_IP" \
-        --header "Authorization Bearer $GITLAB_PAT_TOKEN" \
-        "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
+    # - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
+    # - |
+    #   curl -X PUT \
+    #     --form "value=$EC2_PUBLIC_IP" \
+    #     --header "Authorization Bearer $GITLAB_PAT_TOKEN" \
+    #     "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
+    - curl --header "Authorization: Bearer $GITLAB_PAT_TOKEN" https://gitlab.com/api/v4/user
+
 
     
 docker-build-push:
