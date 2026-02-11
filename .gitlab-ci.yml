@@ -24,7 +24,7 @@ terraform-plan:
   extends:
     - .cd_root_and_init
   script:
-    - mkdir build
+    - mkdir build && echo something > build/foo
     # - terraform plan
 
   artifacts:
