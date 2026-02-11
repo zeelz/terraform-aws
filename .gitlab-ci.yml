@@ -15,7 +15,7 @@ image:
 .cd_root_and_init:
   before_script:
     - cd $TF_ROOT
-    # - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
+    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
   
 terraform-plan:
   stage: plan
@@ -25,7 +25,7 @@ terraform-plan:
     - .cd_root_and_init
   script:
     - mkdir build
-    # - terraform plan
+    - terraform plan
 
   artifacts:
     paths:
@@ -40,12 +40,11 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    # - terraform apply -auto-approve
+    - terraform apply -auto-approve
     # - terraform apply -auto-approve -destroy
 
-    # update GH settings env var with the new IP
-    # - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - EC2_PUBLIC_IP=vancouver
+    # update CI/CD env var with the new IP for other jobs to use
+    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
     - |
       curl -X PUT \
         --form "value=$EC2_PUBLIC_IP" \
