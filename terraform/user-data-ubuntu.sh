@@ -40,32 +40,32 @@ sudo newgrp docker
 
 #### DISABLED MINIKUBE INSTALL TO TRY MICROK8S ###
 
-# # but minikube won't run cos' cloud-init is running this entire script as root, which minikube doesn't like
-# # suggestion is to run minikube with systemd service
-# # Exiting due to DRV_AS_ROOT: The "docker" driver should not be used with root privileges.
-# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
-# sudo dpkg -i minikube_latest_amd64.deb
+# but minikube won't run cos' cloud-init is running this entire script as root, which minikube doesn't like
+# suggestion is to run minikube with systemd service
+# Exiting due to DRV_AS_ROOT: The "docker" driver should not be used with root privileges.
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+sudo dpkg -i minikube_latest_amd64.deb
 
-# # Reboot
-# sudo systemctl reboot
+# Reboot
+sudo systemctl reboot
 
-# # minikube start ## minikube won't start with docker driver as root
-# sudo -u ubuntu minikube start --driver=docker
+# minikube start ## minikube won't start with docker driver as root
+sudo -u ubuntu minikube start --driver=docker
 
 
-# echo kubectl='minikube kubectl --' >> ~/.bashrc
+echo kubectl='minikube kubectl --' >> ~/.bashrc
 
 #### END -- DISABLED MINIKUBE INSTALL TO TRY MICROK8S ###
 
 # Install Microk8s
-sudo snap install microk8s --classic
+# sudo snap install microk8s --classic
 
-sudo usermod -aG microk8s ubuntu
+# sudo usermod -aG microk8s ubuntu
 
-sudo chown -R ubuntu ~/.kube
+# sudo chown -R ubuntu ~/.kube
 
-newgrp microk8s
+# newgrp microk8s
 
-microk8s helm3 repo add headlamp https://kubernetes-sigs.github.io/headlamp/
+# microk8s helm3 repo add headlamp https://kubernetes-sigs.github.io/headlamp/
 
-microk8s heml3 upgrade --install headlamp-dash headlamp/headlamp --namespace kube-system
+# microk8s heml3 upgrade --install headlamp-dash headlamp/headlamp --namespace kube-system
