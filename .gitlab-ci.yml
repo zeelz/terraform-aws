@@ -40,8 +40,8 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply -auto-approve
-    # - terraform apply -auto-approve -destroy
+    # - terraform apply -auto-approve
+    - terraform apply -auto-approve -destroy
 
     # update CI/CD env var with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
@@ -50,6 +50,13 @@ terraform-apply:
         --form "value=$EC2_PUBLIC_IP" \
         --header "Authorization: Bearer $GITLAB_PAT_TOKEN" \
         "https://gitlab.com/api/v4/projects/75392331/variables/ZEELZ_EC2_IP"
+
+    # Send EC2 IP to Slack
+    - |
+      curl -X POST \
+        --header "Content-Type: application/json" \
+        -d "{\"text\": \"EC2 IP: $EC2_PUBLIC_IP\"}" \
+        $SLACK_WEBHOOK_URL
 
 
     
