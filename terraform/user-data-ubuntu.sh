@@ -57,7 +57,7 @@ echo kubectl='minikube kubectl --' >> ~/.bashrc
 
 #### END -- DISABLED MINIKUBE INSTALL TO TRY MICROK8S ###
 
-# Install Microk8s
+# # Install Microk8s
 # sudo snap install microk8s --classic
 
 # sudo usermod -aG microk8s ubuntu
