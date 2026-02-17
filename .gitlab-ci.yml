@@ -40,8 +40,8 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    # - terraform apply -auto-approve
-    - terraform apply -auto-approve -destroy
+    - terraform apply -auto-approve
+    # - terraform apply -auto-approve -destroy
 
     # update CI/CD env var with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
@@ -55,7 +55,7 @@ terraform-apply:
     - |
       curl -X POST \
         --header "Content-Type: application/json" \
-        -d "{\"text\": \"EC2 IP: $EC2_PUBLIC_IP\"}" \
+        -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
         $SLACK_WEBHOOK_URL
 
 
