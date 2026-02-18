@@ -32,6 +32,13 @@ variable "AWS_AMI" {
   type          = string
   description   = "value in gitlab env vars"
 }
+
+variable "os_type" {
+  type          = string
+  default       = "ubuntu" # amazon | ubuntu
+  description   = "this variable defines the user-data file to load"
+}
+
 # this bucket resource was commented to rm it from tf mgmt so when everything is destoryed it won't be affected
 # it is used for state mgmt - backend
 
@@ -44,7 +51,7 @@ resource "aws_key_pair" "zeelz_db" {
     public_key = var.SSH_PUBLIC_KEY
 }
 
-resource "aws_security_group" "devops_test_sg" {
+resource "aws_security_group" "" {
     name      = "devops_test_sg"
     vpc_id    = var.VPC_ID_DEFAULT #aws_vpc.main.id #
 
@@ -90,12 +97,10 @@ resource "aws_instance" "zeelz_db_ec2" {
     }
 }
 
-variable "os_type" {
-  type          = string
-  default       = "ubuntu" # amazon | ubuntu
-  description   = "this variable defines the user-data file to load"
-}
-
 output "zeelz_db_ec2_ip" {
     value   = aws_instance.zeelz_db_ec2.public_ip
 }
+
+# output "devops_test_sg_id" {
+#     value   = aws_security_group.devops_test_sg.id
+# }
