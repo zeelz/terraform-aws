@@ -43,8 +43,8 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    # - terraform apply -auto-approve
-    - terraform apply -auto-approve -destroy
+    - terraform apply -auto-approve
+    # - terraform apply -auto-approve -destroy
 
     # update CI/CD env var with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
@@ -81,8 +81,6 @@ terraform-apply:
 
 ansible:
   image: cytopia/ansible:latest
-  rules:
-    - when: never # just to disable the job
   stage: ansible
   dependencies:
     - terraform-apply
