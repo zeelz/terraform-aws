@@ -51,7 +51,7 @@ resource "aws_key_pair" "zeelz_db" {
     public_key = var.SSH_PUBLIC_KEY
 }
 
-resource "aws_security_group" "" {
+resource "aws_security_group" "devops_test_sg" {
     name      = "devops_test_sg"
     vpc_id    = var.VPC_ID_DEFAULT #aws_vpc.main.id #
 
