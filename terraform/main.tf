@@ -90,7 +90,7 @@ resource "aws_instance" "zeelz_db_ec2" {
     key_name                        = aws_key_pair.zeelz_db.key_name
     associate_public_ip_address     = true
     user_data                       = file("${path.module}/user-data-${var.os_type}.sh")
-    # default 8gb not enough for multi-node minikube
+    user_data_replace_on_change     = true #
     root_block_device {
       volume_size                   = 16
       volume_type                   = "gp3"
