@@ -85,7 +85,7 @@ ansible:
     - when: never # just to disable the job
   stage: ansible
   dependencies:
-    - terraform
+    - terraform-apply
   script:
     # Create inventory file
     - echo "[ec2]" > inventory.ini
