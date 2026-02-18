@@ -9,6 +9,5 @@ ansible:
   stage: ansible
   script:
     # Create inventory file
-    - echo "[ec2]" > inventory.ini
-    - echo "$SSH_PRIVATE_KEY" >> inventory.ini
-    - cat inventory.ini
+    - echo "SSH_PRIVATE_KEY content:"
+    - cat $SSH_PRIVATE_KEY
