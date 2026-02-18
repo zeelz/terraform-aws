@@ -1,10 +1,13 @@
 #!/bin/bash
+set -e
 
+export DEBIAN_FRONTEND=noninteractive
 # update system
-sudo apt update -y && sudo apt upgrade -y
+apt update -y
+# apt upgrade -y ## will trigger kernel ui so don't
 
 # installing docker deps
-sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+apt install -y apt-transport-https ca-certificates curl software-properties-common
 
 # add docker GPG key
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
@@ -12,22 +15,22 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 # add docker repo
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
 
 # update package index again
-sudo apt update -y
+apt-get update -y
 
-sudo apt install -y docker-ce docker-ce-cli containerd.io
+apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # start and enable docker as a service
-sudo systemctl start docker
-sudo systemctl enable docker
+systemctl start docker
+systemctl enable docker
 
 # add ubuntu to docker group
-sudo usermod -aG docker ubuntu
+usermod -aG docker ubuntu
 
 # activate group assignment
-sudo newgrp docker
+newgrp docker
 
 # they say newgrp breaks execution flow. let's see
 # flow didn't break. docker pulled and ran ✅
@@ -57,14 +60,17 @@ sudo newgrp docker
 #### END -- DISABLED MINIKUBE INSTALL TO TRY MICROK8S ###
 
 # Install Microk8s
-sudo snap install microk8s --classic
+snap install microk8s --classic
 
-sudo usermod -aG microk8s ubuntu
+usermod -aG microk8s ubuntu
 
-sudo chown -R ubuntu ~/.kube
+mkdir -p /home/ubuntu/.kube
+chown -R ubuntu:ubuntu /home/ubuntu/.kube
 
-newgrp microk8s
+# newgrp microk8s ## doesn't work in cloud-init
+
+# Wait for microk8s
+microk8s status --wait-ready
 
 microk8s helm3 repo add headlamp https://kubernetes-sigs.github.io/headlamp/
-
-microk8s heml3 upgrade --install headlamp-dash headlamp/headlamp --namespace kube-system
+microk8s helm3 upgrade --install headlamp-dash headlamp/headlamp --namespace kube-system
