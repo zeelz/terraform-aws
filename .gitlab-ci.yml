@@ -16,7 +16,6 @@ image:
 .cd_root_and_init:
   before_script:
     - cd $TF_ROOT
-    - VAR_FROM_JOB="foobar"
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
   
 terraform-plan:
@@ -40,7 +39,7 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    - when: never # working but disabled
+    # - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -82,21 +81,17 @@ terraform-apply:
 
 ansible:
   image: willhallonline/ansible:latest
-  # image: registry.gitlab.com/op_so/docker/ansible # not found
   stage: ansible
   dependencies:
-    - terraform-plan
+    - terraform-apply
   script:
-    # - apt-get update && apt-get install -y openssh-client jq
     # Create inventory file
     - echo "[ec2]" > inventory.ini
-    # - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - echo "$TF_ROOT ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
-    - echo "VAR_FROM_JOB $VAR_FROM_JOB"
-    - cat inventory.ini
+    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
+    - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
     # Run Ansible playbook
-    # - ansible-playbook -i inventory.ini ansible/playbook.yml
+    - ansible-playbook -i inventory.ini ansible/playbook.yml
 
 
     
