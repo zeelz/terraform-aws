@@ -65,7 +65,7 @@ terraform-apply:
 
   artifacts:
     paths:
-      - tf-outputs.json
+      - $TF_ROOT/tf-outputs.json
     reports:
       dotenv: $TF_ROOT/build.env
 
