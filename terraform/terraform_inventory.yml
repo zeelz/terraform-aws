@@ -1,9 +1,7 @@
-plugin: community.general.terraform
-# Path to your remote state file in S3
-remote_state:
-  backend: s3
-  config:
-    bucket: "zeelz-terraform-bucket"
-    key: "terraform.tfstate"
-    encrypt: true
-    region: "us-east-1"
+- name: S3 Backend
+  community.general.terraform:
+    backend_config:
+      bucket: "zeelz-terraform-bucket"
+      key: "terraform.tfstate"
+      encrypt: true
+      region: "us-east-1"
