@@ -16,12 +16,12 @@ image:
 .cd_root_and_init:
   before_script:
     - cd $TF_ROOT
-    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
+    # - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
   
 terraform-plan:
   stage: plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -39,7 +39,7 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -81,19 +81,29 @@ terraform-apply:
 #     - ansible all -i inventory.ini -m wait_for_connection
 #     - ansible-playbook -i inventory.ini playbook.yml
 
+deploy:
+  stage: deploy
+  extends:
+    - .cd_root_and_init
+  script:
+    - pwd
+    - echo 100.0.1 > key
+
 ansible:
   image: willhallonline/ansible:latest
   stage: ansible
   dependencies:
-    - terraform-apply
+    - deploy
   script:
     # Create inventory file
     - echo "[ec2]" > inventory.ini
     - EC2_PUBLIC_IP=$(cat $TF_ROOT/key)
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
+    - cat inventory.ini
+    
     # Run Ansible playbook
-    - ansible-playbook -i inventory.ini ansible/playbook.yml
+    # - ansible-playbook -i inventory.ini ansible/playbook.yml
 
 
     
