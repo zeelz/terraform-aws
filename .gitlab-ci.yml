@@ -104,7 +104,7 @@ ansible:
     - ansible-galaxy collection install community.general
 
     # Run Ansible playbook
-    - ansible-playbook -i terraform_inventory.yml ansible/playbook.yml
+    - ansible-playbook -i $TF_ROOT/terraform_inventory.yml ansible/playbook.yml
 
 
     
