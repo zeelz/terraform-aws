@@ -85,6 +85,9 @@ deploy:
   stage: deploy
   script:
     - echo 100.0.1 > ~/key
+  artifacts:
+    paths:
+      - ~/key
 
 ansible:
   # image: willhallonline/ansible:latest
