@@ -94,7 +94,7 @@ ansible:
     - terraform-apply
   script:
     - apk add --no-cache jq
-    - jq -r '.zeelz_db_ec2_ip.value' tf-outputs.json
+    - jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json
     # Create inventory file
     - echo "[ec2]" > inventory.ini
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
