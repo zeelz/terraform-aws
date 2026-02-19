@@ -16,12 +16,12 @@ image:
 .cd_root_and_init:
   before_script:
     - cd $TF_ROOT
-    # - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
+    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
   
 terraform-plan:
   stage: plan
   rules:
-    - when: never # working but disabled
+    # - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -39,7 +39,7 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    - when: never # working but disabled
+    # - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -48,8 +48,7 @@ terraform-apply:
 
     # update CI/CD env var with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) #terraform output -json > tf-outputs.json # needs jq
-    - echo $EC2_PUBLIC_IP > key # for other jobs
-
+    - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" >> .env # for other jobs
     - |
       curl -X PUT \
         --form "value=$EC2_PUBLIC_IP" \
@@ -62,6 +61,10 @@ terraform-apply:
         --header "Content-Type: application/json" \
         -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
         $SLACK_WEBHOOK_URL
+        
+  artifacts:
+    reports:
+      dotenv: .env
 
 # ansible0:
 #   stage: ansible
@@ -81,22 +84,11 @@ terraform-apply:
 #     - ansible all -i inventory.ini -m wait_for_connection
 #     - ansible-playbook -i inventory.ini playbook.yml
 
-deployer:
-  stage: deploy
-  script:
-    - echo "EC2_PUBLIC_IP=100.0.1" >> .env
-    - cat .env
-  artifacts:
-    reports:
-      dotenv: .env
-
 ansible:
   # image: willhallonline/ansible:latest
-  rules:
-    - when: never
   stage: ansible
   dependencies:
-    - deployer
+    - terraform-apply
   script:
     # Create inventory file
     - echo "[ec2]" > inventory.ini
@@ -105,7 +97,7 @@ ansible:
     - cat inventory.ini
 
     # Run Ansible playbook
-    # - ansible-playbook -i inventory.ini ansible/playbook.yml
+    - ansible-playbook -i inventory.ini ansible/playbook.yml
 
 
     
