@@ -49,6 +49,8 @@ terraform-apply:
     # update CI/CD env var with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) #terraform output -json > tf-outputs.json # needs jq
     - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
+    - echo "EC2_PUBLIC_IP2=$EC2_PUBLIC_IP" >> $GITLAB_ENV
+    - echo $EC2_PUBLIC_IP2
     - |
       curl -X PUT \
         --form "value=$EC2_PUBLIC_IP" \
@@ -93,6 +95,7 @@ ansible:
     # Create inventory file
     - echo "[ec2]" > inventory.ini
     - echo $EC2_PUBLIC_IP
+    - echo $EC2_PUBLIC_IP2
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
     - cat inventory.ini
