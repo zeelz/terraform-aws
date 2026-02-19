@@ -44,11 +44,12 @@ terraform-apply:
     - .cd_root_and_init
   script:
     - terraform apply -auto-approve
-    - terraform output -json > tf-outputs.json
     # - terraform apply -auto-approve -destroy
 
     # update CI/CD env var with the new IP for other jobs to use
-    - export EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
+    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) #terraform output -json > tf-outputs.json # needs jq
+    - echo $EC2_PUBLIC_IP > key # for other jobs
+
     - |
       curl -X PUT \
         --form "value=$EC2_PUBLIC_IP" \
@@ -88,9 +89,7 @@ ansible:
   script:
     # Create inventory file
     - echo "[ec2]" > inventory.ini
-    - echo "EC2_PUBLIC_IP $EC2_PUBLIC_IP"
-    - apt update && apt install -y jq
-    - export EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' tf-outputs.json)
+    - EC2_PUBLIC_IP=$(cat $TF_ROOT/key)
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
     # Run Ansible playbook
