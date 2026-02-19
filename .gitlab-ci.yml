@@ -107,7 +107,7 @@ ansible:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
     # install terraform plugin to bring in hosts
-    # - ansible-galaxy collection install community.general
+    - ansible-galaxy collection install community.general
 
     # Run Ansible playbook
     - ansible-playbook -i $TF_ROOT/terraform_inventory.yml ansible/playbook.yml
