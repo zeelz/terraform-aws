@@ -80,8 +80,8 @@ terraform-apply:
 #     - ansible-playbook -i inventory.ini playbook.yml
 
 ansible:
-  # image: willhallonline/ansible:latest
-  image: registry.gitlab.com/op_so/docker/ansible
+  image: willhallonline/ansible:latest
+  # image: registry.gitlab.com/op_so/docker/ansible # not found
   stage: ansible
   dependencies:
     - terraform-apply
