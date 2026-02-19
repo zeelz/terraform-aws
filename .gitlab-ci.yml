@@ -61,7 +61,7 @@ terraform-apply:
         --header "Content-Type: application/json" \
         -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
         $SLACK_WEBHOOK_URL
-        
+
   artifacts:
     reports:
       dotenv: .env
@@ -85,7 +85,7 @@ terraform-apply:
 #     - ansible-playbook -i inventory.ini playbook.yml
 
 ansible:
-  # image: willhallonline/ansible:latest
+  image: willhallonline/ansible:latest
   stage: ansible
   dependencies:
     - terraform-apply
