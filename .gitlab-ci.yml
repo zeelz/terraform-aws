@@ -81,10 +81,11 @@ terraform-apply:
 #     - ansible all -i inventory.ini -m wait_for_connection
 #     - ansible-playbook -i inventory.ini playbook.yml
 
-deploy:
+deployer:
   stage: deploy
   script:
-    - echo 100.0.1 > ~/key
+    - echo 100.0.1 > key
+    - export FOO=bar
   artifacts:
     paths:
       - ~/key
@@ -93,11 +94,12 @@ ansible:
   # image: willhallonline/ansible:latest
   stage: ansible
   dependencies:
-    - deploy
+    - deployer
   script:
     # Create inventory file
     - echo "[ec2]" > inventory.ini
-    - EC2_PUBLIC_IP=$(cat ~/key)
+    - echo $FOO
+    - EC2_PUBLIC_IP=$(cat key)
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
     - cat inventory.ini
