@@ -88,9 +88,10 @@ deploy:
   script:
     - pwd
     - echo 100.0.1 > key
+    - cat key
 
 ansible:
-  image: willhallonline/ansible:latest
+  # image: willhallonline/ansible:latest
   stage: ansible
   dependencies:
     - deploy
@@ -101,7 +102,7 @@ ansible:
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
     - cat inventory.ini
-    
+
     # Run Ansible playbook
     # - ansible-playbook -i inventory.ini ansible/playbook.yml
 
