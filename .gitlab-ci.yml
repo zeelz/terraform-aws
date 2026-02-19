@@ -64,6 +64,8 @@ terraform-apply:
         $SLACK_WEBHOOK_URL
 
   artifacts:
+    paths:
+      - tf-outputs.json
     reports:
       dotenv: $TF_ROOT/build.env
 
