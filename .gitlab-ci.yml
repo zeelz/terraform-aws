@@ -32,7 +32,7 @@ image:
 
 
 include:
-  - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component
+  - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
     inputs:
       stage: component
 
