@@ -19,18 +19,7 @@ image:
     - cd $TF_ROOT
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
 
-# include:
-#   - component: $CI_SERVER_FQDN/to-be-continuous/ansible/gitlab-ci-ansible@7.1.1
-#     # 2: set/override component inputs
-#     inputs:
-#       # ⚠ this is only an example
-#       base-app-name: wonderapp
-#       default-inventory: "inventory.ini"
-#       default-tags: "install"
-#       default-extra-args: "-b"
-#       prod-playbook-file: "main.yml"
-
-
+# a working `include` sample
 include:
   - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
     inputs:
@@ -40,7 +29,7 @@ include:
 terraform-plan:
   stage: plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -58,7 +47,7 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -155,13 +144,13 @@ docker-build-push:
     - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
     - docker push $DOCKER_USER/express-gitlab
 
-# deploy-to-ec2:
-#   image: alpine
-#   stage: deploy
-#   needs: [docker-build-push]
-#   rules:
-#     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#     # - when: never # working but disabled for now
-#   script:
-#     - chmod +x ssh-install-deploy.sh
-#     - ./gitlab-ssh-install-deploy.sh
+deploy-to-ec2:
+  image: alpine
+  stage: deploy
+  # needs: [docker-build-push]
+  rules:
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # explain: 
+    # - when: never # working but disabled for now, though not elegant
+  script:
+    - chmod +x gitlab-ssh-install-deploy.sh
+    - ./gitlab-ssh-install-deploy.sh
