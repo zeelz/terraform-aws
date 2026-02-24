@@ -51,31 +51,31 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply -auto-approve
-    # - terraform apply -auto-approve -destroy
+    # - terraform apply -auto-approve
+    - terraform apply -auto-approve -destroy
 
-    # update CI/CD env var with the new IP for other jobs to use
-    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) 
-    - terraform output -json > tf-outputs.json # needs jq
-    - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
-    - |
-      curl -X PUT \
-        --form "value=$EC2_PUBLIC_IP" \
-        --header "Authorization: Bearer $GITLAB_PAT_TOKEN" \
-        "https://gitlab.com/api/v4/projects/74663565/variables/ZEELZ_EC2_IP"
+  #   # update CI/CD env var with the new IP for other jobs to use
+  #   - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) 
+  #   - terraform output -json > tf-outputs.json # needs jq
+  #   - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
+  #   - |
+  #     curl -X PUT \
+  #       --form "value=$EC2_PUBLIC_IP" \
+  #       --header "Authorization: Bearer $GITLAB_PAT_TOKEN" \
+  #       "https://gitlab.com/api/v4/projects/74663565/variables/ZEELZ_EC2_IP"
 
-    # Send EC2 IP to Slack
-    - |
-      curl -X POST \
-        --header "Content-Type: application/json" \
-        -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
-        $SLACK_WEBHOOK_URL
+  #   # Send EC2 IP to Slack
+  #   - |
+  #     curl -X POST \
+  #       --header "Content-Type: application/json" \
+  #       -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
+  #       $SLACK_WEBHOOK_URL
 
-  artifacts:
-    paths:
-      - $TF_ROOT/tf-outputs.json
-    reports:
-      dotenv: $TF_ROOT/build.env
+  # artifacts:
+  #   paths:
+  #     - $TF_ROOT/tf-outputs.json
+  #   reports:
+  #     dotenv: $TF_ROOT/build.env
 
 docker-build-push:
   stage: docker-push

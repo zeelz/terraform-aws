@@ -10,7 +10,7 @@ apt update -y
 apt install -y apt-transport-https ca-certificates curl software-properties-common
 
 # add docker GPG key
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
 
 # add docker repo
 echo \
@@ -38,23 +38,24 @@ usermod -aG docker ubuntu
 # docker run -d --restart unless-stopped -p 3300:3300 zeelz/node-app-devops-test
 
 
-### MINIKUBE INSTALL TO TRY MICROK8S ###
+### MINIKUBE INSTALL ###
 
 # but minikube won't run cos' cloud-init is running this entire script as root, which minikube doesn't like
 # suggestion is to run minikube with systemd service
 # Exiting due to DRV_AS_ROOT: The "docker" driver should not be used with root privileges.
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
-sudo dpkg -i minikube_latest_amd64.deb
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb dpkg -i minikube_latest_amd64.deb
 
-# Reboot
-sudo systemctl reboot
+until docker info >/dev/null 2>&1; do
+  echo waiting
+  sleep 5
+done
 
-# minikube start ## minikube won't start with docker driver as root
+# minikube start as ubuntu. minikube forbids docker driver as root
 sudo -u ubuntu minikube start --driver=docker
 
-echo kubectl='minikube kubectl --' >> ~/.bashrc
+echo kubectl='minikube kubectl --' >> /home/ubuntu/.bashrc
 
-### END -- DISABLED MINIKUBE INSTALL TO TRY MICROK8S ###
+### END -- MINIKUBE INSTALL ###
 
 # ### Install Microk8s
 # snap install microk8s --classic
