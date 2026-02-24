@@ -29,7 +29,7 @@ include:
 terraform-plan:
   stage: plan
   rules:
-    - when: never # working but disabled
+    # - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -47,12 +47,12 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    - when: never # working but disabled
+    # - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply -auto-approve
-    # - terraform apply -auto-approve -destroy
+    # - terraform apply -auto-approve
+    - terraform apply -auto-approve -destroy
 
     # update CI/CD env var with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) 
@@ -119,8 +119,6 @@ ansible:
 
     # Run Ansible playbook
     - ansible-playbook -i $TF_ROOT/terraform_inventory.yml ansible/playbook.yml
-
-
     
 docker-build-push:
   stage: docker-push
@@ -150,7 +148,7 @@ deploy-to-ec2:
   # needs: [docker-build-push]
   rules:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # explain: 
-    # - when: never # working but disabled for now, though not elegant
+    - when: never # working but disabled for now, though not elegant
   script:
     - chmod +x gitlab-ssh-install-deploy.sh
     - ./gitlab-ssh-install-deploy.sh

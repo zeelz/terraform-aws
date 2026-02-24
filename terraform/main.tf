@@ -33,6 +33,12 @@ variable "AWS_AMI" {
   description   = "value in gitlab env vars"
 }
 
+variable "INSTANCE_TYPE" {
+  type          = string
+  default       = "t3.medium"
+  description   = "upgraded from t2.micro 1vpcu/1gb mb => t3.small 2vcpu/2gb => 2vcpu/4gb"
+}
+
 variable "os_type" {
   type          = string
   default       = "ubuntu" # amazon | ubuntu
@@ -53,7 +59,7 @@ resource "aws_key_pair" "zeelz_db" {
 
 resource "aws_security_group" "devops_test_sg" {
     name      = "devops_test_sg"
-    vpc_id    = var.VPC_ID_DEFAULT #aws_vpc.main.id #
+    vpc_id    = var.VPC_ID_DEFAULT
 
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
@@ -83,15 +89,13 @@ resource "aws_security_group" "devops_test_sg" {
 
 resource "aws_instance" "zeelz_db_ec2" {
     ami                             = "${var.AWS_AMI}"
-    # ami                             = "ami-08982f1c5bf93d976" #amazon linux 2023
-    instance_type                   = "t3.medium" #upgraded from t2.micro 1vpcu/1gb mb => t3.small 2vcpu/2gb => 2vcpu/4gb
+    instance_type                   = "${var.INSTANCE_TYPE}"
     vpc_security_group_ids          = [aws_security_group.devops_test_sg.id]
-    # vpc_security_group_ids          = ["sg-033eebe707ffaa9c2"]
     key_name                        = aws_key_pair.zeelz_db.key_name
     associate_public_ip_address     = true
     # ansible is now handling configuration, thanks user-data
-    # user_data                       = file("${path.module}/user-data-${var.os_type}.sh")
-    # user_data_replace_on_change     = true
+    user_data                       = file("${path.module}/user-data-${var.os_type}.sh")
+    user_data_replace_on_change     = true
     root_block_device {
       volume_size                   = 16
       volume_type                   = "gp3"
@@ -102,6 +106,6 @@ output "zeelz_db_ec2_ip" {
     value   = aws_instance.zeelz_db_ec2.public_ip
 }
 
-# output "devops_test_sg_id" {
-#     value   = aws_security_group.devops_test_sg.id
-# }
+output "devops_test_sg_id" {
+    value   = aws_security_group.devops_test_sg.id
+}
