@@ -95,6 +95,7 @@ resource "aws_instance" "zeelz_db_ec2" {
     associate_public_ip_address     = true
     # ansible is now handling configuration, thanks user-data
     user_data                       = file("${path.module}/user-data-${var.os_type}.sh")
+    # user_data                       = file("${path.module}/cloud-init.yml")
     user_data_replace_on_change     = true
     root_block_device {
       volume_size                   = 16
