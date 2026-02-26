@@ -134,8 +134,8 @@ ansible:
     # - ansible-galaxy collection install community.general
 
     # Run Ansible playbook
-    # - ansible all -i inventory.ini -m ping
-    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ubuntu@$EC2_PUBLIC_IP echo ansible
+    - ANSIBLE_HOST_KEY_CHECKING=False ansible all -i inventory.ini -m ping
+    # - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ubuntu@$EC2_PUBLIC_IP echo ansible
 
   # stage: ansible
   # dependencies:
