@@ -29,7 +29,7 @@ include:
 terraform-plan:
   stage: plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -47,7 +47,7 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -113,27 +113,28 @@ deploy-to-ec2:
 ansible:
   image: willhallonline/ansible:latest #ansiblelinux/ansible
   rules:
-    - when: never
+    # - when: never
   stage: ansible
-  dependencies:
-    - terraform-apply
+  dependencies: []
+    # - terraform-apply
   script:
-    - apk add --no-cache jq
-    - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json)
+    # - apk add --no-cache jq
+    # - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json)    
+    - EC2_PUBLIC_IP=$ZEELZ_EC2_IP
     # Create inventory file
     - echo "[ec2]" > inventory.ini
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY" >> inventory.ini
     - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
 
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    # - eval $(ssh-agent -s)
+    # - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # - mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
     # install terraform plugin to bring in hosts
-    - ansible-galaxy collection install community.general
+    # - ansible-galaxy collection install community.general
 
     # Run Ansible playbook
-    - ansible-playbook -i $TF_ROOT/terraform_inventory.yml ansible/playbook.yml
+    - ansible all -i inventory.ini -m ping
 
   # stage: ansible
   # dependencies:
