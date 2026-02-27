@@ -20,16 +20,16 @@ image:
     - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
 
 # a working `include` sample
-include:
-  - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
-    inputs:
-      stage: component
+# include:
+#   - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
+#     inputs:
+#       stage: component
 
 
 terraform-plan:
   stage: plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -47,7 +47,7 @@ terraform-apply:
   dependencies:
     - terraform-plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
@@ -115,12 +115,12 @@ ansible:
   rules:
     # - when: never
   stage: ansible
-  dependencies:
-    - terraform-apply
+  dependencies: []
+    # - terraform-apply
   before_script:
-    - apk add --no-cache jq #ansible openssh
-    - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json)    
-    # - EC2_PUBLIC_IP=$ZEELZ_EC2_IP
+    # - apk add --no-cache jq #ansible openssh
+    # - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json) 
+    - EC2_PUBLIC_IP=$ZEELZ_EC2_IP
     # Create inventory file
     - echo "[ec2]" > inventory.ini
     - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> inventory.ini
