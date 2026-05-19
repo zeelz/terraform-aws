@@ -52,7 +52,7 @@ terraform-apply:
     - terraform apply -auto-approve
     # - terraform apply -auto-approve -destroy
 
-    # # update CI/CD env var with the new IP for other jobs to use
+    # # Update CI/CD env vars with the new IP for other jobs to use
     - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip) 
     - terraform output -json > tf-outputs.json # needs jq
     - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
