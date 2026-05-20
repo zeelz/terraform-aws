@@ -43,8 +43,8 @@ jobs:
             - name: terraform setup
               uses: hashicorp/setup-terraform@v3
 
-            #- name: mv files to root $GITHUB_WORKSPACE
-            #  run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
+            - name: mv files to root $GITHUB_WORKSPACE
+              run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
 
             - name: initial terraform
               run: terraform init
