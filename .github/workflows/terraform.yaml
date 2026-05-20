@@ -49,7 +49,7 @@ jobs:
             - name: initial terraform
               run: terraform init
 
-            # comment/uncomment next 3 steps and  last step and vice versa to prvision / destroy
+            # comment/uncomment next 3 steps and last step and vice versa to provision / destroy resources
 
             - name: terraform plan
               run: terraform plan -no-color
