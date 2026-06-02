@@ -37,24 +37,12 @@ jobs:
                 sparse-checkout-cone-mode: false
 
             # - name: Configure AWS Credentials # not needed for tf, just passed those cred as env vars
-            #   uses: aws-actions/configure-aws-credentials@v5.0.0
-            #   with:
-            #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            #     aws-region: us-east-1
-
-
-
-
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@v6.1.0
               with:
                 aws-region: us-east-1
                 role-to-assume: ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }}
-                  
-            - run: aws sts get-caller-identity
-
-
+            
             - name: terraform setup
               uses: hashicorp/setup-terraform@v3
 
@@ -66,17 +54,17 @@ jobs:
 
             # comment/uncomment next 3 steps and last step and vice versa to provision / destroy resources
 
-            # - name: terraform plan
-            #   run: terraform plan -no-color
+            - name: terraform plan
+              run: terraform plan -no-color
 
-            # - name: terraform apply
-            #   run: terraform apply -auto-approve
+            - name: terraform apply
+              run: terraform apply -auto-approve
 
-            # - name: Send EC2 IP to Slack
-            #   run: |
-            #     EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
-            #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
-            #     ${{ vars.SLACK_WEBHOOK_URL }}
+            - name: Send EC2 IP to Slack
+              run: |
+                EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+                curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+                ${{ vars.SLACK_WEBHOOK_URL }}
 
-            - name: terraform destroy
-              run: terraform apply -destroy -auto-approve
+            # - name: terraform destroy
+            #   run: terraform apply -destroy -auto-approve
