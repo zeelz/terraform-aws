@@ -113,13 +113,14 @@ deploy-to-ec2:
 ansible:
   image: willhallonline/ansible:latest #ansiblelinux/ansible
   rules:
-    - when: never
+    # - when: never # for disabling
   stage: ansible
-  dependencies: []
-    # - terraform-apply
+  dependencies:
+    - terraform-apply
   before_script:
     # - apk add --no-cache jq #ansible openssh
     # - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json) 
+    
     - EC2_PUBLIC_IP=$ZEELZ_EC2_IP
     # Create inventory file
     - echo "[ec2]" > inventory.ini
