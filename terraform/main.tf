@@ -64,8 +64,8 @@ resource "aws_security_group" "devops_test_sg" {
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
         protocol            = "tcp"
-        to_port             = 3300
-        from_port           = 3300
+        to_port             = 3000
+        from_port           = 3000
     }
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
