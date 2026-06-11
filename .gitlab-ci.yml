@@ -8,7 +8,7 @@ sts-caller:
   entrypoint: [""]
  id_tokens:
   AWS_ID_TOKEN:
-    aud: sts.amazonaws.com
+    aud: https://gitlab.com
  script:
   - mkdir -p ~/.aws
   - printf "%s" "$AWS_ID_TOKEN" > /tmp/web_identity_token
