@@ -4,7 +4,7 @@ stages:
 before_script:
   - mkdir -p ~/.aws
   - echo "${CI_JOB_JWT_V2}" > /tmp/web_identity_token
-  - >
+  - |
     cat <<EOF > ~/.aws/config
     [profile oidc]
     role_arn=${OIDC_ROLE_ARN}
