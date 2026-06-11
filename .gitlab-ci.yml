@@ -1,137 +1,21 @@
 stages:
-  - plan
-  - apply
-  - docker-push
-  - deploy
-  - ansible
-  - component
+ - oidc-test
 
-variables:
-  TF_ROOT: "terraform"
+before_script:
+  - mkdir -p ~/.aws
+  - echo "${CI_JOB_JWT_V2}" > /tmp/web_identity_token
+  - >
+    cat <<EOF > ~/.aws/config
+    [profile oidc]
+    role_arn=${OIDC_ROLE_ARN}
+    web_identity_token_file=/tmp/web_identity_token
+    EOF
 
-image:
-  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest #hashicorp/terraform:latest
+sts-caller:
+ stage: oidc-test
+ image:
+  name: "amazon/aws-cli"
   entrypoint: [""]
+ script:
+  - aws sts get-caller-identity --profile oidc
 
-# template
-.cd_root_and_init:
-  before_script:
-    - cd $TF_ROOT
-    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
-
-# a working `include` sample
-# include:
-#   - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
-#     inputs:
-#       stage: component
-
-terraform-plan:
-  stage: plan
-  rules:
-    # - when: never # working but disabled
-  extends:
-    - .cd_root_and_init
-  script:
-    - mkdir build
-    - terraform plan
-
-  artifacts:
-    paths:
-      - build/
-  allow_failure: false
-
-terraform-apply:
-  stage: apply
-  dependencies:
-    - terraform-plan
-  rules:
-    # - when: never # working but disabled
-  extends:
-    - .cd_root_and_init
-  script:
-    - terraform apply -auto-approve
-    # - terraform apply -auto-approve -destroy
-
-    ## Comment/Uncomment the rest of this script to provision/destroy
-    
-    # Update CI/CD env vars with the new IP for other jobs to use
-    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - terraform output -json > tf-outputs.json # needs jq
-    - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
-    - |
-      curl -X PUT \
-        --form "value=$EC2_PUBLIC_IP" \
-        --header "Authorization: Bearer $GITLAB_PAT_TOKEN" \
-        "https://gitlab.com/api/v4/projects/74663565/variables/ZEELZ_EC2_IP"
-
-    # Send EC2 IP to Slack
-    - |
-      curl -X POST \
-        --header "Content-Type: application/json" \
-        -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
-        $SLACK_WEBHOOK_URL
-
-  artifacts:
-    paths:
-      - $TF_ROOT/tf-outputs.json
-    reports:
-      dotenv: $TF_ROOT/build.env
-
-docker-build-push:
-  stage: docker-push
-  image: docker:24
-  services:
-    - docker:24-dind
-  rules:
-    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - when: never
-  variables:
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: ""
-  dependencies: []
-
-  before_script:
-    - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
-
-  script:
-    # - cat build/dummy
-    - docker build -t $DOCKER_USER/express-gitlab -f Dockerfile.gitlab .
-    - docker push $DOCKER_USER/express-gitlab
-
-deploy-to-ec2:
-  image: alpine
-  stage: deploy
-  # needs: [docker-build-push]
-  rules:
-    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # explain: 
-    - when: never # working but disabled for now, though not elegant
-  script:
-    - chmod +x gitlab-ssh-install-deploy.sh
-    - ./gitlab-ssh-install-deploy.sh
-
-ansible:
-  image: willhallonline/ansible:latest #ansiblelinux/ansible
-  rules:
-    # - when: never # for disabling
-  stage: ansible
-  dependencies:
-    - terraform-apply
-  before_script:
-    # - apk add --no-cache jq #ansible openssh
-    # - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json) 
-    
-    - EC2_PUBLIC_IP=$ZEELZ_EC2_IP
-    # Create inventory file
-    - echo "[ec2]" > inventory.ini
-    - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> inventory.ini
-    - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
-
-  script:
-    # install terraform plugin to bring in hosts
-    # - ansible-galaxy collection install community.general
-
-    # Run Ansible playbook
-    - ansible all -i inventory.ini -m wait_for_connection
-    - ansible-playbook -i inventory.ini ansible/playbook.yml
-    
