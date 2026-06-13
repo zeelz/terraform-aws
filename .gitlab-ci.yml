@@ -29,7 +29,7 @@ image:
       --role-arn "${OIDC_ROLE_ARN}" 
       --role-session-name "gitlab-ci-${CI_PIPELINE_ID}" 
       --web-identity-token "${AWS_ID_TOKEN}" 
-      --duration-seconds 3600 
+      --duration-seconds 3000 
       --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" 
       --output text
       )
