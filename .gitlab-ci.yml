@@ -26,7 +26,7 @@ image:
 
     - > 
       STS_ASSUME_ROLE_OUTPUT=$(aws sts assume-role-with-web-identity 
-      --role-arn "${AWS_ROLE_ARN}" 
+      --role-arn "${OIDC_ROLE_ARN}" 
       --role-session-name "gitlab-ci-${CI_PIPELINE_ID}" 
       --web-identity-token "${GITLAB_OIDC_TOKEN}" 
       --duration-seconds 3600 
@@ -48,7 +48,11 @@ image:
     #   EOF
 
     - cd $TF_ROOT
-    - terraform init -backend-config="bucket=$TF_STATE_S3_BUCKET" -backend-config="key=terraform.tfstate" -backend-config="region=us-east-1"
+    - >
+      terraform init 
+      -backend-config="bucket=$TF_STATE_S3_BUCKET" 
+      -backend-config="key=terraform.tfstate" 
+      -backend-config="region=us-east-1"
 
 # a working `include` sample
 # include:
