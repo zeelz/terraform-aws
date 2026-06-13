@@ -33,21 +33,8 @@ image:
       --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" 
       --output text
       )
-
+    # export temporary credentials for runner to access aws
     - export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" $STS_ASSUME_ROLE_OUTPUT)
-
-    # - export AWS_ACCESS_KEY_ID=$(echo "$ASSUME_ROLE_OUTPUT" | awk '{print $1}') 
-    # - export AWS_SECRET_ACCESS_KEY=$(echo "$ASSUME_ROLE_OUTPUT" | awk '{print $2}') 
-    # - export AWS_SESSION_TOKEN=$(echo "$ASSUME_ROLE_OUTPUT" | awk '{print $3}') 
-
-    # - mkdir -p ~/.aws
-    # - printf "%s" "$AWS_ID_TOKEN" > /tmp/web_identity_token
-    # - |
-    #   cat > ~/.aws/config <<EOF
-    #   [profile oidc]
-    #   role_arn=${OIDC_ROLE_ARN}
-    #   web_identity_token_file=/tmp/web_identity_token
-    #   EOF
 
     - cd $TF_ROOT
     - >
@@ -87,32 +74,31 @@ terraform-apply:
   extends:
     - .cd_root_and_init
   script:
-    - terraform apply -auto-approve
+    # - terraform apply -auto-approve
+    # # After successful provisioning update CI/CD env vars with new IP for other jobs to use
+    # - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
+    # - terraform output -json > tf-outputs.json # needs jq
+    # - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
+    # - |
+    #   curl -X PUT \
+    #     --form "value=$EC2_PUBLIC_IP" \
+    #     --header "Authorization: Bearer $GITLAB_PAT_TOKEN" \
+    #     "https://gitlab.com/api/v4/projects/74663565/variables/ZEELZ_EC2_IP"
 
-    # After successful provisioning update CI/CD env vars with new IP for other jobs to use
-    - EC2_PUBLIC_IP=$(terraform output -raw zeelz_db_ec2_ip)
-    - terraform output -json > tf-outputs.json # needs jq
-    - echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" > build.env # for other jobs
-    - |
-      curl -X PUT \
-        --form "value=$EC2_PUBLIC_IP" \
-        --header "Authorization: Bearer $GITLAB_PAT_TOKEN" \
-        "https://gitlab.com/api/v4/projects/74663565/variables/ZEELZ_EC2_IP"
-
-    # Send new EC2 IP to Slack
-    - |
-      curl -X POST \
-        --header "Content-Type: application/json" \
-        -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
-        $SLACK_WEBHOOK_URL
-
-    # - terraform apply -auto-approve -destroy
-    # # Send Slack to confirm resources destroyed successfully
+    # # Send new EC2 IP to Slack
     # - |
     #   curl -X POST \
     #     --header "Content-Type: application/json" \
-    #     -d "{\"text\": \"EC2 and accompanying resources destroyed successfully ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
+    #     -d "{\"text\": \"ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
     #     $SLACK_WEBHOOK_URL
+
+    - terraform apply -auto-approve -destroy
+    # Send Slack to confirm resources destroyed successfully
+    - |
+      curl -X POST \
+        --header "Content-Type: application/json" \
+        -d "{\"text\": \"EC2 and accompanying resources destroyed successfully ZEELZ_EC2_IP: $EC2_PUBLIC_IP\"}" \
+        $SLACK_WEBHOOK_URL
 
   artifacts:
     paths:
