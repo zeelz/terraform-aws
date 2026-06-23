@@ -13,7 +13,7 @@ aws-configure:
 
   id_tokens:
     AWS_OIDC_TOKEN:
-      aud: sts.amazonaws.com
+      aud: https://gitlab.com
 
   script:
     - > 
