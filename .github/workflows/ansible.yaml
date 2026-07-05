@@ -1,0 +1,36 @@
+name: "Setup and Start Wacrm App"
+
+on:
+  push
+
+  # workflow_run:
+  #   workflows: ["Provision and deploy"]
+
+jobs:
+  setup-start-wacrm:
+    runs-on: ubuntu-latest
+    env:
+      EC2_IP: ${{ secrets.EC2_IP }}
+
+    steps:
+    # Check out your repository code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Install Ansible natively using pip
+    - name: Install Ansible
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install ansible
+
+    # Setup SSH keys securely for authentication to targeted remote hosts
+    - name: Setup SSH Agent
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+
+    # Execute the playbook
+    - name: Run Ansible Playbook
+      run: |
+        cd ansible
+        ansible-playbook -i inventory playbook.yml

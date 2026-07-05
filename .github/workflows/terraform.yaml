@@ -2,7 +2,7 @@ name: Provision and deploy
 
 on:
     push:
-      branches: [dev]
+      branches: [dev__DISABLED]
 
     # workflow_run:
     #     workflows: ["Build Push nodejs"]
