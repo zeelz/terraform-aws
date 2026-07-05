@@ -1,97 +1,51 @@
-- name: Setup Docker and MicroK8s
-  hosts: all
+---
+- name: create file play
+  hosts: webserver
   become: true
+  vars:
+    appdir: wacrm
 
   tasks:
-    - name: Update apt cache
-      apt:
+    - name: update cache
+      ansible.builtin.apt:
         update_cache: yes
 
-    - name: Install Docker dependencies
+    - name: install git and curl
       apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-          - gnupg
+        name: [git, curl]
         state: present
 
-    - name: Create /etc/apt/keyrings directory
-      file:
-        path: /etc/apt/keyrings
-        state: directory
-        mode: '0755'
+    - name: download node.js installer
+      shell:
+        cmd: curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - 
+        creates: /etc/apt/sources.list.d/nodesource.list
 
-    - name: Download Docker GPG key
-      get_url:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        dest: /etc/apt/keyrings/docker.asc
-        mode: '0644'
+    - name: install nodejs
+      apt:
+        name: nodejs
+        state: present
+        update_cache: yes
 
-    - name: Add Docker repository (.sources format)
+    - name: clone repo
+      git:
+        repo: https://github.com/ArnasDon/wacrm.git
+        dest: "{{ appdir }}"
+
+    - name: copy env
       copy:
-        dest: /etc/apt/sources.list.d/docker.sources
-        content: |
-          Types: deb
-          URIs: https://download.docker.com/linux/ubuntu
-          Suites: {{ ansible_distribution_release }}
-          Components: stable
-          Signed-By: /etc/apt/keyrings/docker.asc
+        src: .env.local
+        dest: "{{ appdir }}"
 
-    - name: Update apt cache after adding Docker repo
-      apt:
-        update_cache: yes
+    - name: npm install
+      community.general.npm:
+        path: /home/ubuntu/wacrm #install pkgs from package.json
 
-    - name: Install Docker
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
+    - name: install pm2
+      community.general.npm:
+        name: pm2
+        global: true
 
-    - name: Ensure Docker service is running and enabled
-      service:
-        name: docker
-        state: started
-        enabled: yes
-
-    - name: Add ubuntu user to docker group
-      user:
-        name: ubuntu
-        groups: docker
-        append: yes
-
-    - name: Install MicroK8s
-      snap:
-        name: microk8s
-        classic: yes
-        state: present
-
-    - name: Add ubuntu user to microk8s group
-      user:
-        name: ubuntu
-        groups: microk8s
-        append: yes
-
-    - name: Create kube directory
-      file:
-        path: /home/ubuntu/.kube
-        state: directory
-        owner: ubuntu
-        group: ubuntu
-        mode: '0755'
-
-    - name: Wait for MicroK8s to be ready
-      command: microk8s status --wait-ready
-      register: microk8s_status
-      changed_when: false
-
-    - name: Add Headlamp Helm repo
-      command: microk8s helm3 repo add headlamp https://kubernetes-sigs.github.io/headlamp/
-      args:
-        creates: /var/snap/microk8s/current/helm3/repositories.yaml
-
-    - name: Install Headlamp dashboard
-      command: microk8s helm3 upgrade --install headlamp-dash headlamp/headlamp --namespace kube-system
+    - name: npm run dev
+      shell:
+        cmd: pm2 start npm --name wacrm-app -- run dev
+        chdir: "{{ appdir }}"
