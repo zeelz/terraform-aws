@@ -21,3 +21,17 @@ Change `HOST_PORT` and `CONTAINER_PORT` to your desired ports
 GET `/users`
 
 POST `/users` {name, email}
+
+
+-
+
+This repository contains Terraform Iac script to provision EC2 on AWS using GitHub Action and GitLab CI
+
+It is connected to two remotes:
+github  zeelz:zeelz/terraform-aws.git
+origin  gitlab:Zeelz/express-containerized.git
+
+Working branch: dev
+
+git commit -am "Update ..." -m "..." && git push -uf origin dev
+git commit -am "Update ..." -m "..." && git push github dev
