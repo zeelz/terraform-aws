@@ -1,11 +1,12 @@
 name: "Build Push nodejs"
 
 on:
-    push
+    push:
+      branches: [dev__DISABLED]
 
 jobs:
     deploy:
-        if: false #disbled
+        # if: false #you can also use this to disble job
         runs-on: ubuntu-latest
         env:
             DOCKER_USER: ${{ secrets.DOCKER_USER }}
