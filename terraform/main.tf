@@ -17,7 +17,7 @@ terraform {
 
 provider "aws" {
     region  = "us-east-1"
-    profile = "oidc"
+    # profile = "oidc"
 }
 
 variable "VPC_ID_DEFAULT" {
