@@ -28,7 +28,7 @@ jobs:
       run: |
         while IFS= read -r $line; do
           echo "$line" >> "GITHUP_OUTPUT"
-        done < ip-file
+        done < ${{ github.workspace }}/ip-var.txt
 
         echo EC2_UBUNTU_IP
 
