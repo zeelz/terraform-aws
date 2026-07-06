@@ -1,73 +1,100 @@
 name: Provision and deploy
 
 on:
-    push:
-      branches: [dev]
+  push:
+    branches: [dev]
         
 permissions:
   id-token: write
   contents: read
 
+env: # TF_VAR_ values are auto injected into tf input variables 
+  TF_VAR_SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+  TF_VAR_VPC_ID_DEFAULT: ${{ secrets.VPC_ID_DEFAULT }}
+  TF_VAR_AWS_AMI: ${{ vars.AWS_AMI }}
+  TF_ROOT: "terraform" # tis standard
+
 jobs:
-    provision_deploy:
-        # if: github.event.workflow_run.conclusion == 'success' #explain: triggered by another workflow that must have "completed" "success"-fully
-        runs-on: ubuntu-latest
-        env: # TF_VAR_ values are auto injected into tf input variables 
-          TF_VAR_SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-          TF_VAR_VPC_ID_DEFAULT: ${{ secrets.VPC_ID_DEFAULT }}
-          TF_VAR_AWS_AMI: ${{ vars.AWS_AMI }}
-          TF_ROOT: "terraform" # tis standard
+  provision_deploy:
+    if: false
+    # github.event.workflow_run.conclusion == 'success' #explain: triggered by another workflow that must have "completed" "success"-fully
+    runs-on: ubuntu-latest
 
-        defaults:
-          run:
-            working-directory: ${{ env.TF_ROOT }}
+    defaults:
+      run:
+        working-directory: ${{ env.TF_ROOT }}
 
-        steps:
+    steps:
 
-            - name: checkout
-              uses: actions/checkout@v5
-              with:
-                # ref: ""
-                # path: ""
-                sparse-checkout: "terraform"
-                sparse-checkout-cone-mode: false
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          # ref: ""
+          # path: ""
+          sparse-checkout: "terraform"
+          sparse-checkout-cone-mode: false
 
-            # - name: Configure AWS Credentials # not needed for tf, just passed those cred as env vars
-            - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v6.1.0
-              with:
-                aws-region: us-east-1
-                role-to-assume: ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }}
-            
-            - name: terraform setup
-              uses: hashicorp/setup-terraform@v4
+      # - name: Configure AWS Credentials # not needed for tf, just passed those cred as env vars
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.1.0
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }}
+      
+      - name: terraform setup
+        uses: hashicorp/setup-terraform@v4
 
-            # - name: mv files to root $GITHUB_WORKSPACE
-            #   run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
+      # - name: mv files to root $GITHUB_WORKSPACE
+      #   run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
 
-            - name: initial terraform
-              run: terraform init
+      - name: initial terraform
+        run: terraform init
 
-            # # comment/uncomment next 4 steps and last step and vice versa to provision or destroy resources
+      # # comment/uncomment next 4 steps and last step and vice versa to provision or destroy resources
 
-            - name: terraform plan
-              run: terraform plan -no-color
+      - name: terraform plan
+        run: terraform plan -no-color
 
-            - name: terraform apply
-              run: terraform apply -auto-approve
+      - name: terraform apply
+        run: terraform apply -auto-approve
 
-            - name: Send EC2 IP to Slack
-              run: |
-                EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
-                echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
-                curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
-                ${{ vars.SLACK_WEBHOOK_URL }}
+      - name: Send EC2 IP to Slack
+        run: |
+          EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+          echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
+          curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+          ${{ vars.SLACK_WEBHOOK_URL }}
 
-            - name: Upload EC2_IP file
-              uses: actions/upload-artifact@v4
-              with:
-                name: ip-file-uploader
-                path: ${{ github.workspace }}/ip-var.txt
+      - name: Upload EC2_IP file
+        uses: actions/upload-artifact@v4
+        with:
+          name: ip-file-uploader
+          path: ${{ github.workspace }}/ip-var.txt
 
-            # - name: terraform destroy
-            #   run: terraform apply -destroy -auto-approve
+  destroy_resources:
+    runs-on: ubuntu-latest
+    # if: false
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          # ref: ""
+          # path: ""
+          sparse-checkout: "terraform"
+          sparse-checkout-cone-mode: false
+
+      # - name: Configure AWS Credentials # not needed for tf, just passed those cred as env vars
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.1.0
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }}
+      
+      - name: terraform setup
+        uses: hashicorp/setup-terraform@v4
+
+      - name: initial terraform
+        run: terraform init
+
+      - name: terraform destroy
+        run: terraform apply -destroy -auto-approve

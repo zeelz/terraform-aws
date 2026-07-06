@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy"]
+    workflows: ["Provision and deploy__"]
     types: [completed]
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
     - name: Inject values from file into env vars
       run: |
         while IFS= read -r $line; do
-          echo "$line" >> "GITHUP_OUTPUT"
+          echo "$line" >> "$GITHUB_OUTPUT"
         done < ${{ github.workspace }}/ip-var.txt
 
     # Install Ansible natively using pip
