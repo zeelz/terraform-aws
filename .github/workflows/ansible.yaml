@@ -30,7 +30,7 @@ jobs:
         ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
 
     - name: try ssh
-      run: ssh ubuntu@${EC2_IP} -o StrictHostKeyChecking=no
+      run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${EC2_IP} "echo connected"
 
     # Execute the playbook
     # - name: Run Ansible Playbook
