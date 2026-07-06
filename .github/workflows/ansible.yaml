@@ -29,15 +29,11 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
 
-    - name: try ssh
-      run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${EC2_IP} "echo connected"
-
     # Execute the playbook
-    # - name: Run Ansible Playbook
-    #   run: |
-    #     cd ansible
-    #     ansible-playbook -i inventory \
-    #     --ssh-extra-args="-o StrictHostKeyChecking=no" \
-    #     --extra-vars "ansible_host=${EC2_IP}" \
-    #     --extra-vars "ansible_user=ubuntu" \
-    #     playbook.yml       
+    - name: Run Ansible Playbook
+      run: |
+        cd ansible
+        ansible-playbook -i inventory \
+        --extra-vars "ansible_host=${EC2_IP}" \
+        --extra-vars "ansible_user=ubuntu" \
+        playbook.yml       
