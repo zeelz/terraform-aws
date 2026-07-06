@@ -31,10 +31,10 @@
         repo: https://github.com/ArnasDon/wacrm.git
         dest: "{{ appdir }}"
 
-    # - name: copy env
-    #   copy:
-    #     src: .env.local
-    #     dest: "{{ appdir }}"
+    - name: copy env
+      copy:
+        src: .env.local
+        dest: "{{ appdir }}"
 
     - name: npm install
       community.general.npm:

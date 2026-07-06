@@ -49,22 +49,32 @@ jobs:
             # - name: mv files to root $GITHUB_WORKSPACE
             #   run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
 
-            - name: initial terraform
-              run: terraform init
+            # - name: initial terraform
+            #   run: terraform init
 
-            # comment/uncomment next 3 steps and last step and vice versa to provision or destroy resources
+            # # comment/uncomment next 3 steps and last step and vice versa to provision or destroy resources
 
-            - name: terraform plan
-              run: terraform plan -no-color
+            # - name: terraform plan
+            #   run: terraform plan -no-color
 
-            - name: terraform apply
-              run: terraform apply -auto-approve
+            # - name: terraform apply
+            #   run: terraform apply -auto-approve
 
-            - name: Send EC2 IP to Slack
-              run: |
-                EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
-                curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
-                ${{ vars.SLACK_WEBHOOK_URL }}
+            # - name: Send EC2 IP to Slack
+            #   run: |
+            #     EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+            #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+            #     ${{ vars.SLACK_WEBHOOK_URL }}
 
             # - name: terraform destroy
             #   run: terraform apply -destroy -auto-approve
+
+            - name: Try upload
+              run: |
+                echo EC2_UBUNTU_IP=000.111.222 > ip-file # for upload
+
+            - name: Upload EC2_IP
+              uses: actions/upload-artifact@v4
+              with:
+                name: ip-file-uploader
+                path: ip-file

@@ -1,10 +1,11 @@
 name: "Setup and Start Wacrm App"
 
 on:
-  push
+  # push
 
-  # workflow_run:
-  #   workflows: ["Provision and deploy"]
+  workflow_run:
+    workflows: ["Provision and deploy"]
+    types: [completed]
 
 jobs:
   setup-start-wacrm:
@@ -17,23 +18,37 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Install Ansible natively using pip
-    - name: Install Ansible
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install ansible
 
-    # Setup SSH keys securely for authentication to targeted remote hosts
-    - name: Setup SSH Agent
-      uses: webfactory/ssh-agent@v0.9.0
+    - name: downloader
+      uses: actions/download-artifact@v4
       with:
-        ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
-
-    # Execute the playbook
-    - name: Run Ansible Playbook
+        name: ip-file-uploader # now ip-file is availble to use in steps
+        
+    - name: try file
       run: |
-        cd ansible
-        ansible-playbook -i inventory \
-        --extra-vars "ansible_host=${EC2_IP}" \
-        --extra-vars "ansible_user=ubuntu" \
-        playbook.yml       
+        while IFS= read -r $line; do
+          echo "$line" >> "GITHUP_OUTPUT"
+        done < ip-file
+
+        echo EC2_UBUNTU_IP
+
+    # # Install Ansible natively using pip
+    # - name: Install Ansible
+    #   run: |
+    #     python3 -m pip install --upgrade pip
+    #     pip install ansible
+
+    # # Setup SSH keys securely for authentication to targeted remote hosts
+    # - name: Setup SSH Agent
+    #   uses: webfactory/ssh-agent@v0.9.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+
+    # # Execute the playbook
+    # - name: Run Ansible Playbook
+    #   run: |
+    #     cd ansible
+    #     ansible-playbook -i inventory \
+    #     --extra-vars "ansible_host=${EC2_IP}" \
+    #     --extra-vars "ansible_user=ubuntu" \
+    #     playbook.yml       
