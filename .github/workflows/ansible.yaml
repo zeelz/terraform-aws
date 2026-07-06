@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy__"]
+    workflows: ["Provision and deploy"]
     types: [completed]
 
 jobs:

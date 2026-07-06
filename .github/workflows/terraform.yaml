@@ -18,7 +18,7 @@ defaults:
     working-directory: "terraform"
 jobs:
   provision_deploy:
-    if: false
+    # if: false
     # github.event.workflow_run.conclusion == 'success' #explain: triggered by another workflow that must have "completed" "success"-fully
     runs-on: ubuntu-latest
 
@@ -72,7 +72,7 @@ jobs:
 
   destroy_resources:
     runs-on: ubuntu-latest
-    # if: false
+    if: false
     steps:
       - name: checkout
         uses: actions/checkout@v5
