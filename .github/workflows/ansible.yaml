@@ -23,6 +23,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: ip-file-uploader # now ip-var.txt is availble to use in steps
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: try file
       run: |
