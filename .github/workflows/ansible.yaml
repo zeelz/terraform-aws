@@ -45,14 +45,13 @@ jobs:
     # Execute the playbook
     - name: Run Ansible Playbook
       run: |
+        echo "output: ${{ steps.env-injestor.outputs.EC2_IP }}"
         cd ansible
         ansible-playbook -i inventory \
-        --extra-vars "ansible_host=${{ secrets.EC2_IP }}" \
+        --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
         --extra-vars "ansible_user=ubuntu" \
         playbook.yml       
 
-
-      # --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
 
       # curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
       # ${{ vars.SLACK_WEBHOOK_URL }}
