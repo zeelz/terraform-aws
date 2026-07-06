@@ -22,8 +22,8 @@ jobs:
     - name: downloader
       uses: actions/download-artifact@v4
       with:
-        name: ip-file-uploader # now ip-file is availble to use in steps
-        
+        name: ip-file-uploader # now ip-var.txt is availble to use in steps
+
     - name: try file
       run: |
         while IFS= read -r $line; do
