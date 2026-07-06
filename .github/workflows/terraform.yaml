@@ -70,8 +70,7 @@ jobs:
             #   run: terraform apply -destroy -auto-approve
 
             - name: Try upload
-              run: |
-                echo "EC2_UBUNTU_IP=000.111.222" > ip-var.txt # for upload
+              run: echo "EC2_UBUNTU_IP=000.111.222" > ip-var.txt # for upload
 
             - name: Upload EC2_IP
               uses: actions/upload-artifact@v4
