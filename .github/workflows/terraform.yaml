@@ -2,11 +2,7 @@ name: Provision and deploy
 
 on:
     push:
-      branches: [dev] #dev_DISABLED
-
-    # workflow_run:
-    #     workflows: ["Build Push nodejs"]
-    #     types: completed
+      branches: [dev]
         
 permissions:
   id-token: write
@@ -49,10 +45,10 @@ jobs:
             # - name: mv files to root $GITHUB_WORKSPACE
             #   run: mv terraform/* . # non-standard. set a default workking-dir at job level instead
 
-            # - name: initial terraform
-            #   run: terraform init
+            - name: initial terraform
+              run: terraform init
 
-            # # comment/uncomment next 3 steps and last step and vice versa to provision or destroy resources
+            # # comment/uncomment next 4 steps and last step and vice versa to provision or destroy resources
 
             # - name: terraform plan
             #   run: terraform plan -no-color
@@ -63,18 +59,15 @@ jobs:
             # - name: Send EC2 IP to Slack
             #   run: |
             #     EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+            #     echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
             #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
             #     ${{ vars.SLACK_WEBHOOK_URL }}
 
-            # - name: terraform destroy
-            #   run: terraform apply -destroy -auto-approve
+            # - name: Upload EC2_IP file
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #     name: ip-file-uploader
+            #     path: ${{ github.workspace }}/ip-var.txt
 
-            - name: Try upload
-              run: |
-                echo "EC2_UBUNTU_IP=000.111.222" > ${{ github.workspace }}/ip-var.txt # for upload
-
-            - name: Upload EC2_IP
-              uses: actions/upload-artifact@v4
-              with:
-                name: ip-file-uploader
-                path: ${{ github.workspace }}/ip-var.txt
+            - name: terraform destroy
+              run: terraform apply -destroy -auto-approve
