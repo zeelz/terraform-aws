@@ -14,15 +14,15 @@ env: # TF_VAR_ values are auto injected into tf input variables
   TF_VAR_AWS_AMI: ${{ vars.AWS_AMI }}
   TF_ROOT: "terraform" # tis standard
 
+defaults:
+  run:
+    working-directory: ${TF_ROOT} #${{ env.TF_ROOT }}
 jobs:
   provision_deploy:
     if: false
     # github.event.workflow_run.conclusion == 'success' #explain: triggered by another workflow that must have "completed" "success"-fully
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ${{ env.TF_ROOT }}
 
     steps:
 
