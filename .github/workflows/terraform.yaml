@@ -50,24 +50,24 @@ jobs:
 
             # # comment/uncomment next 4 steps and last step and vice versa to provision or destroy resources
 
-            # - name: terraform plan
-            #   run: terraform plan -no-color
+            - name: terraform plan
+              run: terraform plan -no-color
 
-            # - name: terraform apply
-            #   run: terraform apply -auto-approve
+            - name: terraform apply
+              run: terraform apply -auto-approve
 
-            # - name: Send EC2 IP to Slack
-            #   run: |
-            #     EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
-            #     echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
-            #     curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
-            #     ${{ vars.SLACK_WEBHOOK_URL }}
+            - name: Send EC2 IP to Slack
+              run: |
+                EC2_IP=$(terraform output -raw zeelz_db_ec2_ip)
+                echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
+                curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+                ${{ vars.SLACK_WEBHOOK_URL }}
 
-            # - name: Upload EC2_IP file
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #     name: ip-file-uploader
-            #     path: ${{ github.workspace }}/ip-var.txt
+            - name: Upload EC2_IP file
+              uses: actions/upload-artifact@v4
+              with:
+                name: ip-file-uploader
+                path: ${{ github.workspace }}/ip-var.txt
 
-            - name: terraform destroy
-              run: terraform apply -destroy -auto-approve
+            # - name: terraform destroy
+            #   run: terraform apply -destroy -auto-approve
