@@ -9,8 +9,8 @@ on:
 jobs:
   setup-start-wacrm:
     runs-on: ubuntu-latest
-    env:
-      EC2_IP: ${{ secrets.EC2_IP }}
+    # env:
+    #   EC2_IP: ${{ secrets.EC2_IP }}
 
     steps:
     # Check out your repository code
@@ -33,4 +33,4 @@ jobs:
     - name: Run Ansible Playbook
       run: |
         cd ansible
-        ansible-playbook -i inventory playbook.yml
+        ansible-playbook -i {{ secrets.EC2_IP }} -u ubuntu --ssh-extra-args="-o StrictHostKeyChecking=no" playbook.yml
