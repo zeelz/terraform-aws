@@ -1,11 +1,11 @@
 name: "Setup and Start Wacrm App"
 
 on:
-  # push
+  push
 
-  workflow_run:
-    workflows: ["Provision and deploy"]
-    types: [completed]
+  # workflow_run:
+  #   workflows: ["Provision and deploy"]
+  #   types: [completed]
 
 jobs:
   setup-start-wacrm:
@@ -16,19 +16,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download artifact from provsioner workflow
-      uses: actions/download-artifact@v4
-      with:
-        name: ip-file-uploader # now ip-var.txt is availble to use in steps
-        run-id: ${{ github.event.workflow_run.id }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Download artifact from provsioner workflow
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: ip-file-uploader # now ip-var.txt is availble to use in steps
+    #     run-id: ${{ github.event.workflow_run.id }}
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Inject values from file into env vars
-      id: env-injector
-      run: |
-        while IFS= read -r $line; do
-          echo "$line" >> $GITHUB_OUTPUT
-        done < ${{ github.workspace }}/ip-var.txt
+    # - name: Inject values from file into env vars
+    #   id: env-injector
+    #   run: |
+    #     while IFS= read -r $line; do
+    #       echo "$line" >> $GITHUB_OUTPUT
+    #     done < ${{ github.workspace }}/ip-var.txt
 
     # Install Ansible natively using pip
     - name: Install Ansible
@@ -47,11 +47,12 @@ jobs:
       run: |
         cd ansible
         ansible-playbook -i inventory \
-        --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
+        --extra-vars "ansible_host=${{ secrets.EC2_IP }}" \
         --extra-vars "ansible_user=ubuntu" \
         playbook.yml       
 
 
+      # --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
 
       # curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
       # ${{ vars.SLACK_WEBHOOK_URL }}
