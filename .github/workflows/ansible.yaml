@@ -1,11 +1,11 @@
 name: "Setup and Start Wacrm App"
 
 on:
-  # push
+  push
 
-  workflow_run:
-    workflows: ["Provision and deploy"]
-    types: [completed]
+  # workflow_run:
+  #   workflows: ["Provision and deploy"]
+  #   types: [completed]
 
 jobs:
   setup-start-wacrm:
@@ -16,36 +16,45 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download artifact from provsioner workflow
-      uses: actions/download-artifact@v4
-      with:
-        name: ip-file-uploader # now ip-var.txt is availble to use in steps
-        run-id: ${{ github.event.workflow_run.id }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Download artifact from provsioner workflow
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: ip-file-uploader # now ip-var.txt is availble to use in steps
+    #     run-id: ${{ github.event.workflow_run.id }}
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Inject values from file into env vars
+    # - name: Inject values from file into env vars
+    #   run: |
+    #     while IFS= read -r $line; do
+    #       echo "$line" >> "$GITHUB_OUTPUT"
+    #     done < ${{ github.workspace }}/ip-var.txt
+
+    - name: Injestor
+      id: injestor
       run: |
-        while IFS= read -r $line; do
-          echo "$line" >> "$GITHUB_OUTPUT"
-        done < ${{ github.workspace }}/ip-var.txt
+        echo "CITY=vancouver" >> $GITHUB_OUTPUT
 
-    # Install Ansible natively using pip
-    - name: Install Ansible
+    - name: Try GITHUB_OUTPUT
       run: |
-        python3 -m pip install --upgrade pip
-        pip install ansible
+        echo ${{ steps.injestor.outputs.CITY }}
 
-    # Setup SSH keys securely for authentication to targeted remote hosts
-    - name: Setup SSH Agent
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+    # # Install Ansible natively using pip
+    # - name: Install Ansible
+    #   run: |
+    #     python3 -m pip install --upgrade pip
+    #     pip install ansible
 
-    # Execute the playbook
-    - name: Run Ansible Playbook
-      run: |
-        cd ansible
-        ansible-playbook -i inventory \
-        --extra-vars "ansible_host=${EC2_IP}" \
-        --extra-vars "ansible_user=ubuntu" \
-        playbook.yml       
+    # # Setup SSH keys securely for authentication to targeted remote hosts
+    # - name: Setup SSH Agent
+    #   uses: webfactory/ssh-agent@v0.9.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+
+    # # Execute the playbook
+    # - name: Run Ansible Playbook
+    #   run: |
+    #     cd ansible
+    #     ansible-playbook -i inventory \
+    #     --extra-vars "ansible_host=${EC2_IP}" \
+    #     --extra-vars "ansible_user=ubuntu" \
+    #     playbook.yml       

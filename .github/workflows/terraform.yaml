@@ -2,7 +2,7 @@ name: Provision and deploy
 
 on:
   push:
-    branches: [dev]
+    branches: [dev__]
         
 permissions:
   id-token: write
