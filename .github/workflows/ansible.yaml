@@ -1,11 +1,11 @@
 name: "Setup and Start Wacrm App"
 
 on:
-  push
+  # push
 
-  # workflow_run:
-  #   workflows: ["Provision and deploy"]
-  #   types: [completed]
+  workflow_run:
+    workflows: ["Provision and deploy"]
+    types: [completed]
 
 jobs:
   setup-start-wacrm:
