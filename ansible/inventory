@@ -1,5 +1,5 @@
 [webserver]
-zeelz_ec2 
+zeelz-ec2 
 
 [webserver:vars]
 ansible_host=$EC2_IP
