@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy__"]
+    workflows: ["Provision and deploy"]
     types: [completed]
 
 jobs:
@@ -50,3 +50,8 @@ jobs:
         --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
         --extra-vars "ansible_user=ubuntu" \
         playbook.yml       
+
+
+
+      # curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+      # ${{ vars.SLACK_WEBHOOK_URL }}
