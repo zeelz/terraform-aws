@@ -28,7 +28,7 @@ jobs:
       run: |
         cat ${{ github.workspace }}/ip-var.txt
 
-        while IFS= read -r $line; do
+        while IFS= read -r line; do
           echo "$line" >> $GITHUB_OUTPUT
         done < ${{ github.workspace }}/ip-var.txt
 
