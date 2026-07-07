@@ -29,14 +29,14 @@ jobs:
         cat ${{ github.workspace }}/ip-var.txt
 
         while IFS= read -r line; do
-          echo "$line" >> $GITHUB_OUTPUT
+          echo "$line" >> "$GITHUB_OUTPUT"
         done < ${{ github.workspace }}/ip-var.txt
 
-        echo "CITY=vancouver" >> $GITHUB_OUTPUT
+        echo "CITY=vancouver" >> "$GITHUB_OUTPUT"
         cat $GITHUB_OUTPUT
 
     - name: Check GITHUB_OUTPUT
-      run: echo 'IP:' ${{ steps.injector.outputs.CITY }}
+      run: echo 'IP:' ${{ steps.injector.outputs.EC2_IP }}
 
     # # Install Ansible natively using pip
     # - name: Install Ansible
