@@ -23,21 +23,17 @@ jobs:
         run-id: ${{ github.event.workflow_run.id }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: View file
+    - name: Inject values from file into env vars
       id: injector
       run: |
-        cat ip-var.txt
-        echo "CITY=canada" >> $GITHUB_OUTPUT
+        cat ${{ github.workspace }}/ip-var.txt
+
+        while IFS= read -r $line; do
+          echo "$line" >> $GITHUB_OUTPUT
+        done < ${{ github.workspace }}/ip-var.txt
 
     - name: Check GITHUB_OUTPUT
-      run: echo 'CITY:' ${{ steps.injector.outputs.CITY }}
-
-    # - name: Inject values from file into env vars
-    #   id: env-injector
-    #   run: |
-    #     while IFS= read -r $line; do
-    #       echo "$line" >> $GITHUB_OUTPUT
-    #     done < ${{ github.workspace }}/ip-var.txt
+      run: echo 'IP:' ${{ steps.injector.outputs.EC2_IP }}
 
     # # Install Ansible natively using pip
     # - name: Install Ansible
