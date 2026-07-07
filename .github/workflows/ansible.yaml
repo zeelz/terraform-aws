@@ -30,29 +30,32 @@ jobs:
           echo "$line" >> "$GITHUB_OUTPUT"
         done < ${{ github.workspace }}/ip-var.txt
 
-    # Install Ansible natively using pip
-    - name: Install Ansible
+    - name: Check GITHUB_OUTPUT
       run: |
-        python3 -m pip install --upgrade pip
-        pip install ansible
+        echo 'IP:' ${{ steps.injector.outputs.EC2_IP }}
+        ssh -o StrictHostKeyChecking=no ubuntu@ ${{ steps.injector.outputs.EC2_IP }}
 
-    # Setup SSH keys securely for authentication to targeted remote hosts
-    - name: Setup SSH Agent
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+    # # Install Ansible natively using pip
+    # - name: Install Ansible
+    #   run: |
+    #     python3 -m pip install --upgrade pip
+    #     pip install ansible
 
-    # Execute the playbook
-    - name: Run Ansible Playbook
-      run: |
-        echo 'IP: ' ${{ steps.injestor.outputs.EC2_IP }}
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ steps.injestor.outputs.EC2_IP }}
-        
-        # cd ansible
-        # ansible-playbook -i inventory \
-        # --extra-vars "ansible_host=${{ steps.injestor.outputs.EC2_IP }}" \
-        # --extra-vars "ansible_user=ubuntu" \
-        # playbook.yml       
+    # # Setup SSH keys securely for authentication to targeted remote hosts
+    # - name: Setup SSH Agent
+    #   uses: webfactory/ssh-agent@v0.9.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+
+    # # Execute the playbook
+    # - name: Run Ansible Playbook
+    #   run: |
+    #     echo "output: ${{ steps.injector.outputs.EC2_IP }}"
+    #     cd ansible
+    #     ansible-playbook -i inventory \
+    #     --extra-vars "ansible_host=${{ steps.injector.outputs.EC2_IP }}" \
+    #     --extra-vars "ansible_user=ubuntu" \
+    #     playbook.yml       
 
 
       # curl -X POST --header "Content-Type: application/json" \
