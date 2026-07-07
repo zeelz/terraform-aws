@@ -30,20 +30,19 @@ jobs:
           echo "$line" >> "$GITHUB_OUTPUT"
         done < ${{ github.workspace }}/ip-var.txt
 
+    # - name: Check output with ssh without agent
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     echo ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H ${{ steps.injector.outputs.EC2_IP }} >> ~/.ssh/known_hosts
+    #     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ steps.injector.outputs.EC2_IP }} "echo connected"
+
     # Setup SSH keys securely for authentication to targeted remote hosts
     - name: Setup SSH Agent
       uses: webfactory/ssh-agent@v0.9.0
       with:
         ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
-
-    # - name: Check output with ssh
-    #   run: |
-    #     ssh -o StrictHostKeyChecking=no ubuntu@${{ steps.injector.outputs.EC2_IP }} "echo connected again"
-
-    #     mkdir -p ~/.ssh
-    #     echo ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa
-    #     chmod 600 ~/.ssh/id_rsa
-    #     ssh-keyscan -H ${{ steps.injector.outputs.EC2_IP }} >> ~/.ssh/known_hosts
 
     # Install Ansible natively using pip
     - name: Install Ansible
@@ -61,7 +60,6 @@ jobs:
         --extra-vars "ansible_user=ubuntu" \
         playbook.yml       
 
-
-      # curl -X POST --header "Content-Type: application/json" \
-      # -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
-      # ${{ vars.SLACK_WEBHOOK_URL }}
+    # use curl send slack message for notification
+    - name: Send Slack notification
+      run: |
