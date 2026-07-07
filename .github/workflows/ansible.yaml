@@ -30,6 +30,12 @@ jobs:
           echo "$line" >> "$GITHUB_OUTPUT"
         done < ${{ github.workspace }}/ip-var.txt
 
+    # Setup SSH keys securely for authentication to targeted remote hosts
+    - name: Setup SSH Agent
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+
     - name: Check GITHUB_OUTPUT
       run: |
         echo 'IP:' ${{ steps.injector.outputs.EC2_IP }}
@@ -45,12 +51,6 @@ jobs:
     #   run: |
     #     python3 -m pip install --upgrade pip
     #     pip install ansible
-
-    # # Setup SSH keys securely for authentication to targeted remote hosts
-    # - name: Setup SSH Agent
-    #   uses: webfactory/ssh-agent@v0.9.0
-    #   with:
-    #     ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
 
     # # Execute the playbook
     # - name: Run Ansible Playbook
