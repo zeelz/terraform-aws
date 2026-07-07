@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy__"]
+    workflows: ["Provision and deploy"]
     types: [completed]
 
 jobs:
@@ -53,9 +53,14 @@ jobs:
         --extra-vars "ansible_user=ubuntu" \
         playbook.yml       
 
-    # use curl send slack message for notification
-    - name: Send Slack notification
+    - name: Send success Slack notification
       if: steps.ansible_run.outcome == 'success'
       run: |
         curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"Deployment successful. http://:${{ steps.injector.outputs.EC2_IP }}\"}" \
+        ${{ vars.SLACK_WEBHOOK_URL }}
+             
+    - name: Send failure Slack notification
+      if: steps.ansible_run.outcome == 'failure'
+      run: |
+        curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"Deployment failed!\"}" \
         ${{ vars.SLACK_WEBHOOK_URL }}
