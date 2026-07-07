@@ -33,7 +33,12 @@ jobs:
     - name: Check GITHUB_OUTPUT
       run: |
         echo 'IP:' ${{ steps.injector.outputs.EC2_IP }}
-        ssh -o StrictHostKeyChecking=no ubuntu@ ${{ steps.injector.outputs.EC2_IP }}
+        ssh -o StrictHostKeyChecking=no ubuntu@54.81.134.63 "echo connected"
+
+        # mkdir -p ~/.ssh/
+        # echo IPPP > ~/.ssh/id_rsa
+
+        # $(ssh-keyscan rsa IPP)
 
     # # Install Ansible natively using pip
     # - name: Install Ansible
