@@ -32,7 +32,7 @@ jobs:
           echo "$line" >> $GITHUB_OUTPUT
         done < ${{ github.workspace }}/ip-var.txt
 
-        echo CITY=vancouver" >> $GITHUB_OUTPUT
+        echo "CITY=vancouver" >> $GITHUB_OUTPUT
         echo $GITHUB_OUTPUT
 
     - name: Check GITHUB_OUTPUT
