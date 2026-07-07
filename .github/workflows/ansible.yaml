@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy"]
+    workflows: ["Provision and deploy__"]
     types: [completed]
 
 jobs:
@@ -30,14 +30,6 @@ jobs:
           echo "$line" >> "$GITHUB_OUTPUT"
         done < ${{ github.workspace }}/ip-var.txt
 
-    # - name: Check output with ssh without agent
-    #   run: |
-    #     mkdir -p ~/.ssh
-    #     echo ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa
-    #     chmod 600 ~/.ssh/id_rsa
-    #     ssh-keyscan -H ${{ steps.injector.outputs.EC2_IP }} >> ~/.ssh/known_hosts
-    #     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ steps.injector.outputs.EC2_IP }} "echo connected"
-
     # Setup SSH keys securely for authentication to targeted remote hosts
     - name: Setup SSH Agent
       uses: webfactory/ssh-agent@v0.9.0
@@ -52,8 +44,9 @@ jobs:
 
     # Execute the playbook
     - name: Run Ansible Playbook
+      id: ansible_run
+      continue-on-error: true
       run: |
-        echo "output: ${{ steps.injector.outputs.EC2_IP }}"
         cd ansible
         ansible-playbook -i inventory \
         --extra-vars "ansible_host=${{ steps.injector.outputs.EC2_IP }}" \
@@ -62,4 +55,7 @@ jobs:
 
     # use curl send slack message for notification
     - name: Send Slack notification
+      if: steps.ansible_run.outcome == 'success'
       run: |
+        curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"Deployment successful. http://:${{ steps.injector.outputs.EC2_IP }}\"}" \
+        ${{ vars.SLACK_WEBHOOK_URL }}
