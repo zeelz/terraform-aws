@@ -16,12 +16,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # - name: Download artifact from provsioner workflow
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: ip-file-uploader # now ip-var.txt is availble to use in steps
-    #     run-id: ${{ github.event.workflow_run.id }}
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Download artifact from provsioner workflow
+      uses: actions/download-artifact@v4
+      with:
+        name: ip-file-uploader # now ip-var.txt is availble to use in steps
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: View file
+      id: injector
+      run: |
+        cat ip-var.txt
+        echo "CITY=canada" >> $GITHUB_OUTPUT
+
+    - name: Check GITHUB_OUTPUT
+      run: echo "CITY: ${{ steps.injector.outputs.CITY }}"
 
     # - name: Inject values from file into env vars
     #   id: env-injector
@@ -30,28 +39,29 @@ jobs:
     #       echo "$line" >> $GITHUB_OUTPUT
     #     done < ${{ github.workspace }}/ip-var.txt
 
-    # Install Ansible natively using pip
-    - name: Install Ansible
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install ansible
+    # # Install Ansible natively using pip
+    # - name: Install Ansible
+    #   run: |
+    #     python3 -m pip install --upgrade pip
+    #     pip install ansible
 
-    # Setup SSH keys securely for authentication to targeted remote hosts
-    - name: Setup SSH Agent
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
+    # # Setup SSH keys securely for authentication to targeted remote hosts
+    # - name: Setup SSH Agent
+    #   uses: webfactory/ssh-agent@v0.9.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
 
-    # Execute the playbook
-    - name: Run Ansible Playbook
-      run: |
-        echo "output: ${{ steps.env-injestor.outputs.EC2_IP }}"
-        cd ansible
-        ansible-playbook -i inventory \
-        --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
-        --extra-vars "ansible_user=ubuntu" \
-        playbook.yml       
+    # # Execute the playbook
+    # - name: Run Ansible Playbook
+    #   run: |
+    #     echo "output: ${{ steps.env-injestor.outputs.EC2_IP }}"
+    #     cd ansible
+    #     ansible-playbook -i inventory \
+    #     --extra-vars "ansible_host=${{ steps.env-injestor.outputs.EC2_IP }}" \
+    #     --extra-vars "ansible_user=ubuntu" \
+    #     playbook.yml       
 
 
-      # curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
+      # curl -X POST --header "Content-Type: application/json" \
+      # -d "{\"text\": \"EC2 IP: $EC2_IP\"}" \
       # ${{ vars.SLACK_WEBHOOK_URL }}
