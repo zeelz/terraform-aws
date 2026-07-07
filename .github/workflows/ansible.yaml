@@ -1,4 +1,4 @@
-name: "Setup and Start Wacrm App"
+name: "Setup and Start Wacrm App__"
 
 on:
   # push
@@ -6,6 +6,8 @@ on:
   workflow_run:
     workflows: ["Provision and deploy"]
     types: [completed]
+env:
+  APP_PORTS: ${{ secrets.APP_PORTS }}
 
 jobs:
   setup-start-wacrm:
@@ -56,7 +58,7 @@ jobs:
     - name: Send success Slack notification
       if: steps.ansible_run.outcome == 'success'
       run: |
-        curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"Deployment successful. http://:${{ steps.injector.outputs.EC2_IP }}\"}" \
+        curl -X POST --header "Content-Type: application/json" -d "{\"text\": \"Deployment successful. http://${{ steps.injector.outputs.EC2_IP }}\"}" \
         ${{ vars.SLACK_WEBHOOK_URL }}
              
     - name: Send failure Slack notification

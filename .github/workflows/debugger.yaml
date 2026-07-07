@@ -2,15 +2,17 @@ name: Provision and deploy
 
 on:
   push:
-    branches: [dev__DISABLED]
+    branches: [dev]
         
 permissions:
   id-token: write
   contents: read
 
+env:
+  APP_PORTS: ${{ secrets.APP_PORTS }}
+
 jobs:
   provision_deploy:
-    # if: false
     # github.event.workflow_run.conclusion == 'success' #explain: triggered by another workflow that must have "completed" "success"-fully
     runs-on: ubuntu-latest
 
@@ -19,13 +21,17 @@ jobs:
       - name: checkout
         uses: actions/checkout@v5
 
-      - name: Send EC2 IP to Slack
+      - name: try list[] var from secrets
         run: |
-          EC2_IP=$(echo "54.81.134.63")
-          echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
+          echo "$APP_PORTS" | jq '.[0]'
 
-      - name: Upload EC2_IP file
-        uses: actions/upload-artifact@v4
-        with:
-          name: ip-file-uploader
-          path: ${{ github.workspace }}/ip-var.txt
+      # - name: Send EC2 IP to Slack
+      #   run: |
+      #     EC2_IP=$(echo "54.81.134.63")
+      #     echo "EC2_IP=${EC2_IP}" > ${{ github.workspace }}/ip-var.txt # create file for upload
+
+      # - name: Upload EC2_IP file
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ip-file-uploader
+      #     path: ${{ github.workspace }}/ip-var.txt

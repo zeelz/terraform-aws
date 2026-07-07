@@ -46,6 +46,12 @@ variable "os_type" {
   description   = "this variable defines the user-data file to load"
 }
 
+variable "app_ports" {
+  type          = list(number)
+  default       = [3000, 5000] # amazon | ubuntu
+  description   = "this variable defines app ports"
+}
+
 # this bucket resource was commented to rm it from tf mgmt so when everything is destoryed it won't be affected
 # it is used for state mgmt - backend
 
@@ -65,14 +71,14 @@ resource "aws_security_group" "devops_test_sg" {
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
         protocol            = "tcp"
-        to_port             = 3000
-        from_port           = 3000
+        to_port             = var.app_ports[0]
+        from_port           = var.app_ports[0]
     }
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
         protocol            = "tcp"
-        to_port             = 5500
-        from_port           = 5500
+        to_port             = var.app_ports[1]
+        from_port           = var.app_ports[1]
     }
     ingress {
         cidr_blocks         = ["0.0.0.0/0"]
