@@ -45,11 +45,14 @@ jobs:
     # Execute the playbook
     - name: Run Ansible Playbook
       run: |
-        cd ansible
-        ansible-playbook -i inventory \
-        --extra-vars "ansible_host=${{ steps.injestor.outputs.EC2_IP }}" \
-        --extra-vars "ansible_user=ubuntu" \
-        playbook.yml       
+        echo 'IP: ' ${{ steps.injestor.outputs.EC2_IP }}
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ steps.injestor.outputs.EC2_IP }}
+        
+        # cd ansible
+        # ansible-playbook -i inventory \
+        # --extra-vars "ansible_host=${{ steps.injestor.outputs.EC2_IP }}" \
+        # --extra-vars "ansible_user=ubuntu" \
+        # playbook.yml       
 
 
       # curl -X POST --header "Content-Type: application/json" \
