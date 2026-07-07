@@ -33,7 +33,7 @@ jobs:
         done < ${{ github.workspace }}/ip-var.txt
 
         echo "CITY=vancouver" >> $GITHUB_OUTPUT
-        echo $GITHUB_OUTPUT
+        cat $GITHUB_OUTPUT
 
     - name: Check GITHUB_OUTPUT
       run: echo 'IP:' ${{ steps.injector.outputs.CITY }}
