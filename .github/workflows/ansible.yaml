@@ -30,7 +30,7 @@ jobs:
         echo "CITY=canada" >> $GITHUB_OUTPUT
 
     - name: Check GITHUB_OUTPUT
-      run: echo "CITY: ${{ steps.injector.outputs.CITY }}"
+      run: echo 'CITY:' ${{ steps.injector.outputs.CITY }}
 
     # - name: Inject values from file into env vars
     #   id: env-injector
