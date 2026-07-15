@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy"]
+    workflows: ["Provision and deploy__"]
     types: [completed]
 env:
   APP_PORTS: ${{ secrets.APP_PORTS }}
