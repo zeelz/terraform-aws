@@ -20,7 +20,7 @@ app.use(express.json())
 app.get('/', (req: Request, res: Response) => {
     res.json({
       status: "all good 👍",
-      version: "Swift falcon"
+      version: "Silent forge"
     })
 })
 
