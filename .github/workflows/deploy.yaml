@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   deploy_app:
-    if: ${{ github_event.workflow_run.conclusion == 'success' }} # run if triggerer was successful.
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} # run if triggerer was successful.
     runs-on: ubuntu-latest
 
     env:
