@@ -22,7 +22,7 @@ jobs:
               
             - name: Get commit sha
               run: |
-                echo "SHORT_SHA=${ GITHUB_SHA::7 }" >> $GITHUB_ENV
+                echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
                 echo "${{ env.SHORT_SHA }}" > ${{ github.workspace }}/github-sha.txt
 
             - name: Upload github sha
