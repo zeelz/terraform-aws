@@ -32,4 +32,4 @@ jobs:
               run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
             - name: docker push
-              run: docker push ${DOCKER_USER}"/express-containerized:${GITHUB_SHA}"
+              run: docker push ${DOCKER_USER}"/express-containerized:${GITHUB_SHA::7}"
