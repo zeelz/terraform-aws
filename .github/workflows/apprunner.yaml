@@ -2,7 +2,7 @@ name: Deploy App Runner service
 
 on:
     push:
-      branches: [dev__disabled]        
+      branches: [dev__DISABLED]        
 
 jobs:
     apprunner_deploy:

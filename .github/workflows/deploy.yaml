@@ -2,11 +2,11 @@ name: "Build Push nodejs"
 
 on:
     push:
-      branches: [dev__DISABLED]
+      branches: [dev]
 
 jobs:
     deploy:
-        # if: false #you can also use this to disble job
+        if: false #you can also use this to disble job true/false
         runs-on: ubuntu-latest
         env:
             DOCKER_USER: ${{ secrets.DOCKER_USER }}
@@ -26,10 +26,10 @@ jobs:
               uses: docker/setup-docker-action@v4
 
             - name: docker build
-              run: docker build -t ${DOCKER_USER}"/node-app-devops-test" .
+              run: docker build -t ${DOCKER_USER}"/express-containerized":${GITHUB_SHA} .
 
             - name: docker login
               run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
             - name: docker push
-              run: docker push ${DOCKER_USER}"/node-app-devops-test"
+              run: docker push ${DOCKER_USER}"/express-containerized:${GITHUB_SHA}"

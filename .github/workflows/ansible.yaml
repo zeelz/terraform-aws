@@ -4,7 +4,7 @@ on:
   # push
 
   workflow_run:
-    workflows: ["Provision and deploy__"]
+    workflows: ["Provision and deploy__DISABLED"]
     types: [completed]
 env:
   APP_PORTS: ${{ secrets.APP_PORTS }}

@@ -1,29 +1,39 @@
-## Simple Express API image
+## Express Containerized
+Express Containerized is a simple sample express app with postgres database integration.
 
-[https://hub.docker.com/r/zeelz/simple-express-app](https://hub.docker.com/r/zeelz/simple-express-app)
+[https://hub.docker.com/r/zeelz/express-containerized](https://hub.docker.com/r/zeelz/express-containerized)
 
-```
-docker run -d
--p [HOST_PORT]:[CONTAINER_PORT] \
--e PORT=[CONTAINER_PORT] \
+
+### Environment variables
+
+PORT (optional)
+DB_USER
+DB_HOST
+DB_NAME
+DB_PASSWORD (optional)
+DB_PORT
+
+### Example Run
+
+```docker run -d -p 3000:3000 \
 --platform linux/amd64 \
-zeelz/simple-express-app
+-e "DB_USER=zeelz" \
+-e "DB_HOST=4.tcp.eu.ngrok.io" \
+-e "DB_NAME=postgres" \
+-e "DB_PORT=27784" zeelz/express-containerized:TAG
 ```
 
-Change `HOST_PORT` and `CONTAINER_PORT` to your desired ports
 
-**Example**
+###Available routes
 
-`docker run -d -p 3000:3000 -e "PORT=3000" --platform linux/amd64 zeelz/simple-express-app`
+GET /
 
-**Available route**
+GET /users
 
-GET `/users`
-
-POST `/users` {name, email}
+POST /users {name, email}
 
 
--
+## Overview of Terraform, Ansible
 
 This repository contains Terraform Iac script to provision EC2 on AWS using GitHub Action and GitLab CI
 
