@@ -29,9 +29,14 @@ jobs:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }}
 
       - name: Update Kubeconfig
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
         run: |
-          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
-          aws sts get-caller-identity
+          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }}
+          aws eks create-access-entry \
+          --cluster-name ${{ env.CLUSTER_NAME }} \
+          --principal-arn ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }} \
+          --type STANDARD
 
       # - name: Set up Helm
       #   uses: azure/setup-helm@v4
