@@ -26,7 +26,7 @@ jobs:
               uses: docker/setup-docker-action@v4
 
             - name: docker build
-              run: docker build -t ${DOCKER_USER}"/express-containerized":${GITHUB_SHA} .
+              run: docker build -t ${DOCKER_USER}"/express-containerized":${GITHUB_SHA::7} .
 
             - name: docker login
               run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
