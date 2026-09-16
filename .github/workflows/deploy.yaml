@@ -1,35 +1,44 @@
-name: "Build Push nodejs"
+name: Deploy to Kubernetes
 
 on:
-    push:
-      branches: [dev]
+  push:
+    branches: [dev]
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-    deploy:
-        if: true #you can also use this to disble job true/false
-        runs-on: ubuntu-latest
-        env:
-            DOCKER_USER: ${{ secrets.DOCKER_USER }}
-            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    # defaults:
-        #     run:
-        #         shell: bash
-        #         working-directory: "app"
-        steps:
-            - name: checkout
-              uses: actions/checkout@v4
+  deploy_app:
+    runs-on: ubuntu-latest
 
-            - name: npm install
-              run: npm ci
+    env:
+      IMAGE_TAG: "5b8c780" # ${GITHUB_SHA::7}
+      CLUSTER_NAME: "eks-cluster-08"
+      AWS_REGION: "us-east-1"
 
-            - name: setup docker
-              uses: docker/setup-docker-action@v4
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
 
-            - name: docker build
-              run: docker build -t ${DOCKER_USER}"/express-containerized":${GITHUB_SHA::7} .
+      # Configure AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.1.0
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_TO_ASSUME }}
 
-            - name: docker login
-              run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Update Kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
-            - name: docker push
-              run: docker push ${DOCKER_USER}"/express-containerized:${GITHUB_SHA::7}"
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Helm install release
+        run: |
+          helm upgrade --install \
+          express-containerized \
+          ./helm/express-containerized \
+          --values ./helm/express-containerized/values.yaml \
+          --set image.tag=${{ env.IMAGE_TAG }}

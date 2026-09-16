@@ -1,0 +1,14 @@
+replicas: 2
+image:
+  repository: "zeelz/express-containerized"
+  tag: "amd"
+
+resources:
+  cpu: "500m"
+  memory: "512Mi"
+
+env:
+  dbHost: "2.tcp.eu.ngrok.io"
+  dbUser: "zeelz"
+  dbName: "postgres"
+  dbPort: "19982"

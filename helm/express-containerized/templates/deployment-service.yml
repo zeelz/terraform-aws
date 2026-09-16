@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-app-deployment
+
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: express
+  template:
+    metadata:
+      labels:
+        app: express
+    spec:
+      containers:          
+      - name: express-app
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - protocol: TCP
+          containerPort: 3000
+        resources:
+          limits:
+            cpu: "{{ .Values.resources.cpu }}"
+            memory: "{{ .Values.resources.memory }}"
+          requests:
+            cpu: "{{ .Values.resources.cpu }}"
+            memory: "{{ .Values.resources.memory }}"
+        env:
+        - name: DB_HOST
+          value: {{ .Values.env.dbHost }}
+        - name: DB_USER
+          value: {{ .Values.env.dbUser }}
+        - name: DB_NAME
+          value: {{ .Values.env.dbName }}
+        - name: DB_PORT
+          value: "{{ .Values.env.dbPort }}"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-app-service
+
+spec:
+  selector:
+    app: express  
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
