@@ -6,7 +6,7 @@ on:
 
 jobs:
     deploy:
-        if: false #you can also use this to disble job true/false
+        if: true #you can also use this to disble job true/false
         runs-on: ubuntu-latest
         env:
             DOCKER_USER: ${{ secrets.DOCKER_USER }}
