@@ -18,7 +18,10 @@ app.use(express.json())
 // }, app)
 
 app.get('/', (req: Request, res: Response) => {
-    res.json({status: "all good 👍"})
+    res.json({
+      status: "all good 👍",
+      version: "Swift falcon"
+    })
 })
 
 app.post('/users', async (req: Request, res: Response) => {

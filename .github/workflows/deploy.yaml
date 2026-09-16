@@ -1,8 +1,12 @@
 name: Deploy to Kubernetes
 
 on:
-  push:
-    branches: [dev]
+  # push:
+  #   branches: [dev]  
+
+  workflow_run:
+    workflows: ["Build Push nodejs"]
+    types: [completed]
 
 permissions:
   id-token: write
@@ -10,16 +14,27 @@ permissions:
 
 jobs:
   deploy_app:
+    if: ${{ github_event.workflow_run.conclusion == 'success' }} # run if triggerer was successful.
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_TAG: "5b8c780" # ${GITHUB_SHA::7}
       CLUSTER_NAME: "eks-cluster-08"
       AWS_REGION: "us-east-1"
 
     steps:
       - name: checkout
         uses: actions/checkout@v5
+
+      - name: Download github sha
+        uses: actions/download-artifact@v4
+        with:
+          name: github-sha
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get commit sha
+        run: |
+          echo "SHORT_SHA=$( cat github-sha.txt )" >> $GITHUB_ENV
 
       # Configure AWS
       - name: Configure AWS Credentials
@@ -54,4 +69,4 @@ jobs:
         run: |
           helm upgrade --install express-containerized ./helm/express-containerized \
           --values ./helm/express-containerized/values.yaml \
-          --set image.tag=${{ env.IMAGE_TAG }}
+          --set image.tag=${{ env.SHORT_SHA }}
