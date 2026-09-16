@@ -37,8 +37,6 @@ jobs:
 
       - name: Helm install release
         run: |
-          helm upgrade --install \
-          express-containerized \
-          ./helm/express-containerized \
+          helm upgrade --install express-containerized ./helm/express-containerized \
           --values ./helm/express-containerized/values.yaml \
           --set image.tag=${{ env.IMAGE_TAG }}
