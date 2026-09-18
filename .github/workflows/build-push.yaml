@@ -2,7 +2,7 @@ name: "Build Push nodejs"
 
 on:
     push:
-      branches: [dev__DISABLED]
+      branches: [dev]
 
 jobs:
     build-push:
