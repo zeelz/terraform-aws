@@ -20,6 +20,9 @@ jobs:
     env:
       CLUSTER_NAME: "eks-cluster-08"
       AWS_REGION: "us-east-1"
+      HELM_RELEASE: "express-containerized"
+      HELM_CHART: "./helm/express-containerized"
+      HELM_VALUES: "./helm/express-containerized/values.yaml"
 
     steps:
       - name: checkout
@@ -67,6 +70,6 @@ jobs:
 
       - name: Helm install release
         run: |
-          helm upgrade --install express-containerized ./helm/express-containerized \
-          --values ./helm/express-containerized/values.yaml \
+          helm upgrade --install "${HELM_RELEASE}" "${HELM_CHART}" \
+          --values "${HELM_VALUES}" \
           --set image.tag=${{ env.SHORT_SHA }}
