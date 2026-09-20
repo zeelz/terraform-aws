@@ -51,9 +51,9 @@ include:
 
   # - local: .gitlab/ci/aws-configure.yml
 
-  # - local: .gitlab/ci/terraform-plan.yml
-  # - local: .gitlab/ci/terraform-apply.yml
+  - local: .gitlab/ci/terraform-plan.yml
+  - local: .gitlab/ci/terraform-apply.yml
   # - local: .gitlab/ci/docker-build-push.yml
 
   # - local: .gitlab/ci/deploy-to-ec2.yml
-  - local: .gitlab/ci/ansible.yml
+  # - local: .gitlab/ci/ansible.yml
