@@ -1,7 +1,7 @@
 terraform-plan:
   stage: plan
   rules:
-    # - when: never # working but disabled
+    - when: never # working but disabled
   extends:
     - .cd_root_and_init
   script:
