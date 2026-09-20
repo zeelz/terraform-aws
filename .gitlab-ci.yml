@@ -5,8 +5,7 @@ variables:
   TF_ROOT: "terraform"
 
 include:
-  file:
-    - ./.gitlab/ci/aws-configure.yml
+  local: ./.gitlab/ci/aws-configure.yml
 
 # aws-configure:
 #   stage: aws-configure
