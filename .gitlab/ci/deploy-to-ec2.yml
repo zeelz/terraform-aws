@@ -4,7 +4,7 @@ deploy-to-ec2:
   # needs: [docker-build-push]
   rules:
     # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # explain: 
-    - when: never # working but disabled for now, though not elegant
+    - when: never # working but disabled for now, though not elegant, use ansible
   script:
     - chmod +x gitlab-ssh-install-deploy.sh
     - ./gitlab-ssh-install-deploy.sh
