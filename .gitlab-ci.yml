@@ -6,23 +6,17 @@ stages:
   - ansible
   - component
   - aws-configure
+  - helm-deploy
 
-variables:
-  TF_ROOT: "terraform"
 
-image:
-  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest #hashicorp/terraform:latest
-  entrypoint: [""]
-
-# template for aws configure
-.cd_root_and_init:
-
+.aws_configure:
   id_tokens:
     AWS_ID_TOKEN: #(GITLAB_OIDC_TOKEN)
       aud: https://gitlab.com
 
+  variables:
+    AWS_REGION: "us-east-1"
   before_script:
-  
     - apk add --no-cache aws-cli
 
     - > 
@@ -37,6 +31,15 @@ image:
     # export temporary credentials for runner to access aws
     - export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" $STS_ASSUME_ROLE_OUTPUT)
 
+# template for aws configure
+.terraform_init:
+  image:
+    name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest #hashicorp/terraform:latest
+    entrypoint: [""]
+  variables:
+    TF_ROOT: "terraform"
+
+  before_script:
     - cd $TF_ROOT
     - >
       terraform init 
@@ -51,9 +54,11 @@ include:
 
   # - local: .gitlab/ci/aws-configure.yml
 
-  - local: .gitlab/ci/terraform-plan.yml
-  - local: .gitlab/ci/terraform-apply.yml
+  # - local: .gitlab/ci/terraform-plan.yml
+  # - local: .gitlab/ci/terraform-apply.yml
   # - local: .gitlab/ci/docker-build-push.yml
 
   # - local: .gitlab/ci/deploy-to-ec2.yml
   # - local: .gitlab/ci/ansible.yml
+
+   - local: .gitlab/ci/helm-deploy.yml
