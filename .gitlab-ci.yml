@@ -1,13 +1,57 @@
 stages:
-  - aws-configure
+  - plan
+  - apply
+  - docker-push
+  - deploy
+  - ansible
+  - component
 
 variables:
   TF_ROOT: "terraform"
 
-include:
-  local: .gitlab/ci/aws-configure.yml
+image:
+  name: registry.gitlab.com/gitlab-org/terraform-images/stable:latest #hashicorp/terraform:latest
+  entrypoint: [""]
 
-# aws-configure:
-#   stage: aws-configure
-#   image:
-#   ...
+# template
+.cd_root_and_init:
+
+  id_tokens:
+    AWS_ID_TOKEN: #(GITLAB_OIDC_TOKEN)
+      aud: https://gitlab.com
+
+  before_script:
+  
+    - apk add --no-cache aws-cli
+
+    - > 
+      STS_ASSUME_ROLE_OUTPUT=$(aws sts assume-role-with-web-identity 
+      --role-arn "${OIDC_ROLE_ARN}" 
+      --role-session-name "gitlab-ci-${CI_PIPELINE_ID}" 
+      --web-identity-token "${AWS_ID_TOKEN}" 
+      --duration-seconds 3600 
+      --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" 
+      --output text
+      )
+    # export temporary credentials for runner to access aws
+    - export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" $STS_ASSUME_ROLE_OUTPUT)
+
+    - cd $TF_ROOT
+    - >
+      terraform init 
+      -backend-config="bucket=$TF_STATE_S3_BUCKET" 
+      -backend-config="key=terraform.tfstate" 
+      -backend-config="region=us-east-1"
+
+include:
+  # - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
+  #   inputs:
+  #     stage: component
+  # - local: .gitlab/ci/aws-configure.yml
+
+  - local: .gitlab/ci/terraform-plan.yml
+  - local: .gitlab/ci/terraform-apply.yml
+  - local: .gitlab/ci/docker-build-push.yml
+
+  # - local: .gitlab/ci/deploy-to-ec2.yml
+  # - local: .gitlab/ci/ansible.yml

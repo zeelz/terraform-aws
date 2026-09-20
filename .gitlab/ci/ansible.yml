@@ -1,0 +1,25 @@
+ansible:
+  image: willhallonline/ansible:latest #ansiblelinux/ansible
+  rules:
+    - when: never # for disabling
+  stage: ansible
+  dependencies:
+    - terraform-apply
+  before_script:
+    # - apk add --no-cache jq #ansible openssh
+    # - EC2_PUBLIC_IP=$(jq -r '.zeelz_db_ec2_ip.value' $TF_ROOT/tf-outputs.json) 
+
+    - EC2_PUBLIC_IP=$ZEELZ_EC2_IP
+    # Create inventory file
+    - echo "[ec2]" > inventory.ini
+    - echo "$EC2_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=$SSH_PRIVATE_KEY ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> inventory.ini
+    - chmod 600 $SSH_PRIVATE_KEY # rw- for the key file
+
+  script:
+    # install terraform plugin to bring in hosts
+    # - ansible-galaxy collection install community.general
+
+    # Run Ansible playbook
+    - ansible all -i inventory.ini -m wait_for_connection
+    - ansible-playbook -i inventory.ini ansible/playbook.yml
+    

@@ -1,0 +1,10 @@
+deploy-to-ec2:
+  image: alpine
+  stage: deploy
+  # needs: [docker-build-push]
+  rules:
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # explain: 
+    - when: never # working but disabled for now, though not elegant
+  script:
+    - chmod +x gitlab-ssh-install-deploy.sh
+    - ./gitlab-ssh-install-deploy.sh

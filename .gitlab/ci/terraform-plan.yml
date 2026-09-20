@@ -1,0 +1,15 @@
+terraform-plan:
+  stage: plan
+  rules:
+    - when: never # working but disabled
+  extends:
+    - .cd_root_and_init
+  script:
+    - mkdir build
+    # - aws sts get-caller-identity
+    - terraform plan
+
+  artifacts:
+    paths:
+      - build/
+  allow_failure: false
