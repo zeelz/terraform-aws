@@ -16,3 +16,4 @@ aws-configure:
   stage: aws-configure
   script:
     - pwd
+    - ls -lahd
