@@ -1,11 +1,11 @@
 helm-deploy:
   stage: helm-deploy
   variables:
-    - CLUSTER_NAME: "eks-cluster-09"
-    - HELM_RELEASE: "express-containerized"
-    - HELM_CHART: "./helm/express-containerized"
-    - HELM_VALUES: "./helm/express-containerized/values.yaml"
-    - SHORT_SHA: "984c837"
+    CLUSTER_NAME: "eks-cluster-09"
+    HELM_RELEASE: "express-containerized"
+    HELM_CHART: "./helm/express-containerized"
+    HELM_VALUES: "./helm/express-containerized/values.yaml"
+    SHORT_SHA: "984c837"
   image: alpine/helm:3.14.0
   extends: [.aws_configure] 
   # dependencies: [docker-build-push]
