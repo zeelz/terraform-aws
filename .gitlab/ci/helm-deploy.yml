@@ -6,16 +6,17 @@ helm-deploy:
     HELM_CHART: "./helm/express-containerized"
     HELM_VALUES: "./helm/express-containerized/values.yaml"
     SHORT_SHA: "984c837"
-  image: alpine/helm:4.2.2
+  image:
+    name: alpine/helm:4.2.2
+    entrypoint: [""]
   extends: [.aws_configure] 
   # dependencies: [docker-build-push]
   script:
-    # - apk add --no-cache aws-cli
-    # # Update Kubeconfig
-    # - aws eks update-kubeconfig --name $CLUSTER_NAME
-    - helm version
+    - apk add --no-cache aws-cli
+    # Update Kubeconfig
+    - aws eks update-kubeconfig --name $CLUSTER_NAME
 
-    # - >
-    #   helm upgrade --install "${HELM_RELEASE}" "${HELM_CHART}"
-    #   --values "${HELM_VALUES}"
-    #   --set image.tag=${SHORT_SHA}
+    - >
+      helm upgrade --install "${HELM_RELEASE}" "${HELM_CHART}"
+      --values "${HELM_VALUES}"
+      --set image.tag=${SHORT_SHA}
