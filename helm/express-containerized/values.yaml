@@ -11,4 +11,4 @@ env:
   dbHost: "2.tcp.eu.ngrok.io"
   dbUser: "zeelz"
   dbName: "postgres"
-  dbPort: "17473"
+  dbPort: "18051"

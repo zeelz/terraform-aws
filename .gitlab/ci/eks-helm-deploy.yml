@@ -5,6 +5,10 @@ helm-deploy:
     HELM_RELEASE: "express-containerized"
     HELM_CHART: "./helm/express-containerized"
     HELM_VALUES: "./helm/express-containerized/values.yaml"
+    IMAGE_REPO: "zeelz/express-containerized"
+    DB_HOST: "2.tcp.eu.ngrok.io"
+    DB_PORT: "17473"
+
   image:
     name: alpine/helm:4.2.2
     entrypoint: [""]
@@ -18,7 +22,10 @@ helm-deploy:
     - >
       helm upgrade --install "${HELM_RELEASE}" "${HELM_CHART}"
       --values "${HELM_VALUES}"
-      --set image.tag=${CI_COMMIT_SHORT_SHA}
+      --set image.repository="${IMAGE_REPO}"
+      --set image.tag="${CI_COMMIT_SHORT_SHA}"
+      --set env.dbHost="${DB_HOST}"
+      --set env.dbPort="${DB_PORT}"
 
     # Slack notification to confirm app deployed
     - |
