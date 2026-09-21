@@ -1,0 +1,1 @@
+This is a sample output showing release name: {{ .Release.Name }}

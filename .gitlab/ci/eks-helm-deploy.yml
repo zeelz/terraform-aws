@@ -5,12 +5,11 @@ helm-deploy:
     HELM_RELEASE: "express-containerized"
     HELM_CHART: "./helm/express-containerized"
     HELM_VALUES: "./helm/express-containerized/values.yaml"
-    SHORT_SHA: "984c837"
   image:
     name: alpine/helm:4.2.2
     entrypoint: [""]
   extends: [.aws_configure] 
-  # dependencies: [docker-build-push]
+  dependencies: [docker-build-push]
   script:
     - apk add --no-cache aws-cli
     # Update Kubeconfig
@@ -19,4 +18,11 @@ helm-deploy:
     - >
       helm upgrade --install "${HELM_RELEASE}" "${HELM_CHART}"
       --values "${HELM_VALUES}"
-      --set image.tag=${SHORT_SHA}
+      --set image.tag=${CI_COMMIT_SHORT_SHA}
+
+    # Slack notification to confirm app deployed
+    - |
+      curl -X POST \
+        --header "Content-Type: application/json" \
+        -d "{\"text\": \"Application deployed with Helm!\"}" \
+        $SLACK_WEBHOOK_URL
