@@ -5,7 +5,7 @@ helm-deploy:
     HELM_RELEASE: "express-containerized"
     HELM_CHART: "./helm/express-containerized"
     HELM_VALUES: "./helm/express-containerized/values.yaml"
-    IMAGE_REPO: "zeelz/express-containerized"
+    IMAGE_REPO: "zeelz/express-gitlab"
     DB_HOST: "2.tcp.eu.ngrok.io"
     DB_PORT: "17473"
 
