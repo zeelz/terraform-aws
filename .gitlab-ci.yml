@@ -1,19 +1,21 @@
 stages:
   - plan
   - apply
+  - aws-configure
   - docker-push
+  - scout
   - deploy
   - ansible
   - component
-  - aws-configure
   - helm-deploy
-  - scout
 
 
 variables:
   AWS_REGION: "us-east-1"
   IMAGE_REPO: "express-gitlab"
   CS_IMAGE: "${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}"
+  DOCKER_USER: "${DOCKER_USER}"
+  DOCKER_HUB_PAT: "${DOCKER_HUB_PAT}"
 
 .aws_configure:
   id_tokens:
