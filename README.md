@@ -45,3 +45,32 @@ Working branch: dev
 
 git commit -am "Update ..." -m "..." && git push -uf origin dev
 git commit -am "Update ..." -m "..." && git push github dev
+
+
+--- flesh this out later
+
+GITHUB ACTIONS
+
+- provision ec2 with terraform
+- build image and push to docker hub
+- ssl pull and run container app
+- ansible deploy app - pm2
+
+- build image and push to docker hub
+- helm deploy container app (eks cluster provisoned by another repo - aws-eks-infra)
+
+GITLAB-CI
+
+- provision ec2 with terraform
+- build image and push to docker hub
+- ssl pull and run container app
+- ansible deploy app - pm2
+
+- build image and push to docker hub
+- helm deploy container app (eks cluster provisoned by another repo - aws-eks-infra)
+
+DOCKER COMPOSE
+...
+
+APP RUNNER
+...

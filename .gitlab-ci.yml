@@ -52,8 +52,9 @@ include:
   #   inputs:
   #     stage: component
 
-  # - local: .gitlab/ci/aws-configure.yml
+  - local: .gitlab/ci/aws-configure.yml
 
+  ## EC2 provisioning
   # - local: .gitlab/ci/terraform-plan.yml
   # - local: .gitlab/ci/terraform-apply.yml
 
