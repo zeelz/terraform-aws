@@ -7,6 +7,7 @@ stages:
   - component
   - aws-configure
   - helm-deploy
+  - scout
 
 
 .aws_configure:
