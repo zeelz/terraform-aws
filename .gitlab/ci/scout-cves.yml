@@ -3,6 +3,8 @@ scout-cves:
   trigger:
     include:
       - component: gitlab.com/docker-scout/ci/cves@main
+        inputs:
+          options: --only-severity=critical,high --exit-code
     strategy: depend
   
   variables:
@@ -10,8 +12,6 @@ scout-cves:
     DOCKER_USER: "${DOCKER_USER}"
     DOCKER_HUB_PAT: "${DOCKER_HUB_PAT}"
 
-
-
-    # inputs:
-    #   stage: scout
-    #   options: --only-severity=critical,high
+  artifacts:
+    paths:
+      - scans.log
