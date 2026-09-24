@@ -56,11 +56,6 @@ include:
   #   inputs:
   #     stage: component
 
-  - component: gitlab.com/docker-scout/ci/cves@main
-    inputs:
-      stage: scout
-      dependencies: [docker-build-push]
-      options: --only-severity=critical,high
 
   - local: .gitlab/ci/aws-configure.yml
 
@@ -69,6 +64,11 @@ include:
   # - local: .gitlab/ci/terraform-apply.yml
 
   - local: .gitlab/ci/docker-build-push.yml
+  
+  - component: gitlab.com/docker-scout/ci/cves@main
+    inputs:
+      stage: scout
+      options: --only-severity=critical,high
 
   # - local: .gitlab/ci/deploy-to-ec2.yml
   # - local: .gitlab/ci/ansible.yml
