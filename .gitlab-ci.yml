@@ -55,7 +55,7 @@ include:
   #   inputs:
   #     stage: component
 
-  - local: .gitlab/ci/aws-configure.yml
+  # - local: .gitlab/ci/aws-configure.yml
 
   ## EC2 provisioning
   # - local: .gitlab/ci/terraform-plan.yml
@@ -79,3 +79,7 @@ docker-scout-cves:
     CS_IMAGE: "${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}"
     DOCKER_USER: "${DOCKER_USER}"
     DOCKER_HUB_PAT: "${DOCKER_HUB_PAT}"
+
+  artifacts:
+    paths:
+      - ds-container-scanning-report.json 
