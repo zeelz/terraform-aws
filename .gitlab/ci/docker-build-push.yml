@@ -19,11 +19,11 @@ docker-build-push:
 
   script:
     # - cat build/dummy
-    - docker build -t $DOCKER_USER/express-gitlab:${CI_COMMIT_SHORT_SHA} .
-    - docker scout cves $DOCKER_USER/express-gitlab:${CI_COMMIT_SHORT_SHA} --output image-cves.txt
-    # - docker scout cves $DOCKER_USER/express-gitlab:${CI_COMMIT_SHORT_SHA} --only-severity critical --exit-code
-    - docker push $DOCKER_USER/express-gitlab:${CI_COMMIT_SHORT_SHA}
+    - docker build -t "${DOCKER_USER}/${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}" .
+    # - docker scout cves "${DOCKER_USER}/${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}" --output image-cves.txt
+    # - docker scout cves "${DOCKER_USER}/${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}" --only-severity critical --exit-code
+    - docker push "${DOCKER_USER}/${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}"
   
-  artifacts:
-    paths:
-      - image-cves.txt
+  # artifacts:
+  #   paths:
+  #     - image-cves.txt

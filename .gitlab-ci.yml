@@ -16,6 +16,10 @@ stages:
 
   variables:
     AWS_REGION: "us-east-1"
+    IMAGE_REPO: "express-gitlab"
+    CS_IMAGE: "${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}"
+
+
   before_script:
     - apk add --no-cache aws-cli
 
@@ -51,6 +55,11 @@ include:
   # - component: $CI_SERVER_FQDN/36834/zeelz-component/my-component@main
   #   inputs:
   #     stage: component
+
+  - component: gitlab.com/docker-scout/ci/cves@main
+    inputs:
+      stage: scout
+      options: --only-severity=critical,high
 
   - local: .gitlab/ci/aws-configure.yml
 
