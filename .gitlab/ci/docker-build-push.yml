@@ -12,8 +12,6 @@ docker-build-push:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: ""
 
-  dependencies: [aws-configure]
-
   before_script:
     - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USER" --password-stdin
 

@@ -56,7 +56,6 @@ include:
   #   inputs:
   #     stage: component
 
-
   - local: .gitlab/ci/aws-configure.yml
 
   ## EC2 provisioning
@@ -64,7 +63,7 @@ include:
   # - local: .gitlab/ci/terraform-apply.yml
 
   - local: .gitlab/ci/docker-build-push.yml
-  
+
   - component: gitlab.com/docker-scout/ci/cves@main
     inputs:
       stage: scout
