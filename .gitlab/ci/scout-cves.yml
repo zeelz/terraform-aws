@@ -1,0 +1,17 @@
+scout-cves:
+  stage: scout
+  trigger:
+    include:
+      - component: gitlab.com/docker-scout/ci/cves@main
+    strategy: depend
+  
+  variables:
+    CS_IMAGE: "${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}"
+    DOCKER_USER: "${DOCKER_USER}"
+    DOCKER_HUB_PAT: "${DOCKER_HUB_PAT}"
+
+
+
+    # inputs:
+    #   stage: scout
+    #   options: --only-severity=critical,high

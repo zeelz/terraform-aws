@@ -13,9 +13,6 @@ stages:
 variables:
   AWS_REGION: "us-east-1"
   IMAGE_REPO: "express-gitlab"
-  CS_IMAGE: "${IMAGE_REPO}:${CI_COMMIT_SHORT_SHA}"
-  DOCKER_USER: "${DOCKER_USER}"
-  DOCKER_HUB_PAT: "${DOCKER_HUB_PAT}"
 
 .aws_configure:
   id_tokens:
@@ -65,13 +62,9 @@ include:
   # - local: .gitlab/ci/terraform-apply.yml
 
   - local: .gitlab/ci/docker-build-push.yml
-
-  - component: gitlab.com/docker-scout/ci/cves@main
-    inputs:
-      stage: scout
-      options: --only-severity=critical,high
+  - local: .gitlab/ci/scout-cves.yml
 
   # - local: .gitlab/ci/deploy-to-ec2.yml
   # - local: .gitlab/ci/ansible.yml
 
-  - local: .gitlab/ci/eks-helm-deploy.yml
+  # - local: .gitlab/ci/eks-helm-deploy.yml
