@@ -1,9 +1,11 @@
+# This Github Actions workflow provisions/deprovisions EC2 instance using Terraform
+# To provision ec2 enable provision job (comment if: false) and disable detroy job (uncomment if: false)
+
 name: Provision and deploy
-# run provision vs destroy job by commenting/uncommenting if: false prop
 
 on:
   push:
-    branches: [dev__DISABLED]
+    branches: [dev]
         
 permissions:
   id-token: write
@@ -20,13 +22,11 @@ defaults:
     working-directory: "terraform"
 jobs:
   provision_resource:
-    if: false
+    # if: false
     # github.event.workflow_run.conclusion == 'success' #explain: triggered by another workflow that must have "completed" "success"-fully
     runs-on: ubuntu-latest
 
-
     steps:
-
       - name: checkout
         uses: actions/checkout@v5
         with:
@@ -72,7 +72,7 @@ jobs:
 
   destroy_resources:
     runs-on: ubuntu-latest
-    # if: false
+    if: false
     steps:
       - name: checkout
         uses: actions/checkout@v5

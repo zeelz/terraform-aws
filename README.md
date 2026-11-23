@@ -51,6 +51,9 @@ git commit -am "Update ..." -m "..." && git push github dev
 
 GITHUB ACTIONS
 
+remote: github
+branch: dev
+
 - provision ec2 with terraform
 - build image and push to docker hub
 - ssl pull and run container app
@@ -60,6 +63,9 @@ GITHUB ACTIONS
 - helm deploy container app (eks cluster provisoned by another repo - aws-eks-infra)
 
 GITLAB-CI
+
+remote: origin
+branch: dev
 
 - provision ec2 with terraform
 - build image and push to docker hub
@@ -73,4 +79,7 @@ DOCKER COMPOSE
 ...
 
 APP RUNNER
+...
+
+HELM
 ...
