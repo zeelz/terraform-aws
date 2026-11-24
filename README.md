@@ -54,7 +54,11 @@ GITHUB ACTIONS
 remote: github
 branch: dev
 
-- provision ec2 with terraform
+### EC2 Provisioning with Terraform
+.github/workflows/terraform.yaml has provision and destroy jobs.
+Disable destroy job with `if: false` to run provision job and vice versa.
+
+
 - build image and push to docker hub
 - ssl pull and run container app
 - ansible deploy app - pm2
